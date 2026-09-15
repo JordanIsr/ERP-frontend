@@ -1,0 +1,68 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">CUENTA</span>
+    <h1>Configuración</h1>
+    <p>Actualice la clave de acceso de su cuenta institucional.</p>
+  </div>
+</section>
+
+<section class="settings-card">
+  <div class="card-title">
+    <div class="title-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 3 5 6v5c0 4.5 2.8 8.4 7 10 4.2-1.6 7-5.5 7-10V6l-7-3Z"/>
+        <path d="M9.5 12h5M12 9.5v5"/>
+      </svg>
+    </div>
+    <div>
+      <h2>Cambiar clave</h2>
+      <p>Para mayor seguridad, ingrese su clave actual y registre una nueva.</p>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-field">
+      <label for="claveAnterior">Clave anterior</label>
+      <div class="password-field">
+        <input id="claveAnterior" [type]="mostrarAnterior ? 'text' : 'password'" formControlName="claveAnterior" autocomplete="current-password" placeholder="Ingrese su clave actual">
+        <button type="button" class="icon-button" (click)="mostrarAnterior = !mostrarAnterior" [attr.aria-label]="mostrarAnterior ? 'Ocultar clave' : 'Mostrar clave'">
+          <svg *ngIf="!mostrarAnterior" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <svg *ngIf="mostrarAnterior" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 3 18 18M10.6 5.2A10.7 10.7 0 0 1 12 5c6.1 0 9.5 7 9.5 7a16.7 16.7 0 0 1-3.2 3.9M6.2 6.3C3.8 8 2.5 12 2.5 12s3.4 7 9.5 7c1.4 0 2.6-.3 3.7-.8"/></svg>
+        </button>
+      </div>
+      <small *ngIf="form.controls.claveAnterior.touched && form.controls.claveAnterior.invalid">Ingrese la clave anterior.</small>
+    </div>
+
+    <div class="form-field">
+      <label for="cambiarClave">Cambiar clave</label>
+      <div class="password-field">
+        <input id="cambiarClave" [type]="mostrarNueva ? 'text' : 'password'" formControlName="cambiarClave" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+        <button type="button" class="icon-button" (click)="mostrarNueva = !mostrarNueva" [attr.aria-label]="mostrarNueva ? 'Ocultar clave' : 'Mostrar clave'">
+          <svg *ngIf="!mostrarNueva" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <svg *ngIf="mostrarNueva" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 3 18 18M10.6 5.2A10.7 10.7 0 0 1 12 5c6.1 0 9.5 7 9.5 7a16.7 16.7 0 0 1-3.2 3.9M6.2 6.3C3.8 8 2.5 12 2.5 12s3.4 7 9.5 7c1.4 0 2.6-.3 3.7-.8"/></svg>
+        </button>
+      </div>
+      <small *ngIf="form.controls.cambiarClave.touched && form.controls.cambiarClave.invalid">La nueva clave debe tener al menos 6 caracteres.</small>
+    </div>
+
+    <div class="form-field">
+      <label for="confirmarClave">Confirmar clave</label>
+      <div class="password-field">
+        <input id="confirmarClave" [type]="mostrarConfirmacion ? 'text' : 'password'" formControlName="confirmarClave" autocomplete="new-password" placeholder="Repita la nueva clave">
+        <button type="button" class="icon-button" (click)="mostrarConfirmacion = !mostrarConfirmacion" [attr.aria-label]="mostrarConfirmacion ? 'Ocultar clave' : 'Mostrar clave'">
+          <svg *ngIf="!mostrarConfirmacion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <svg *ngIf="mostrarConfirmacion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 3 18 18M10.6 5.2A10.7 10.7 0 0 1 12 5c6.1 0 9.5 7 9.5 7a16.7 16.7 0 0 1-3.2 3.9M6.2 6.3C3.8 8 2.5 12 2.5 12s3.4 7 9.5 7c1.4 0 2.6-.3 3.7-.8"/></svg>
+        </button>
+      </div>
+      <small *ngIf="form.controls.confirmarClave.touched && form.controls.confirmarClave.invalid">Confirme la nueva clave.</small>
+    </div>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+    <div class="alert success" *ngIf="success">{{ success }}</div>
+
+    <button class="save-button" type="submit" [disabled]="loading">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 3h11l3 3v15H5V3Z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg>
+      {{ loading ? 'Guardando...' : 'Guardar nueva clave' }}
+    </button>
+  </form>
+</section>

@@ -68,6 +68,10 @@
   <li routerLinkActive="active" *ngIf="esEstudiante()">
     <a routerLink="/historial-academico"><i class="icon">🎓</i> Mi Historial</a>
   </li>
+
+  <li routerLinkActive="active" *ngIf="esEstudiante() || esAdmin() || esDocente || esSecretaria || esUsuario">
+    <a routerLink="/settings"><i class="icon"></i> Configuración</a>
+  </li>
         </ul>
       </nav>
     </aside>
