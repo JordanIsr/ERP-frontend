@@ -1,0 +1,87 @@
+<section class="revision-container">
+  <header>
+    <h1>Revisión de solicitudes de matrícula</h1>
+    <p>Revisa cada PDF y crea la matrícula solamente cuando todos los documentos estén aprobados.</p>
+  </header>
+
+  <div class="filtros card">
+    <input [(ngModel)]="busqueda" placeholder="Cédula, nombres o apellidos" (keyup.enter)="cargar()">
+    <select [(ngModel)]="estado" (change)="cargar()">
+      <option value="">Todos los estados</option>
+      <option value="PENDIENTE">Pendientes</option>
+      <option value="APROBADA">Aprobadas</option>
+      <option value="RECHAZADA">Rechazadas</option>
+    </select>
+    <button (click)="cargar()">Buscar</button>
+  </div>
+
+  <p *ngIf="error" class="mensaje error">{{ error }}</p>
+  <p *ngIf="exito" class="mensaje exito">{{ exito }}</p>
+  <p *ngIf="cargando" class="vacio">Cargando solicitudes...</p>
+
+  <div class="contenido" *ngIf="!cargando">
+    <div class="lista card">
+      <h2>Solicitudes ({{ solicitudes.length }})</h2>
+      <button
+        type="button"
+        class="solicitud-item"
+        *ngFor="let solicitud of solicitudes"
+        [class.activa]="solicitudSeleccionada?.id === solicitud.id"
+        (click)="seleccionar(solicitud)"
+      >
+        <strong>{{ nombreEstudiante(solicitud) }}</strong>
+        <span>{{ solicitud.estudiante?.cedula }}</span>
+        <small>{{ solicitud.periodoCarrera?.periodo?.nombre }} · {{ solicitud.periodoCarrera?.carrera?.nombre }}</small>
+        <span class="estado" [ngClass]="solicitud.estado.toLowerCase()">{{ solicitud.estado }}</span>
+      </button>
+      <p class="vacio" *ngIf="solicitudes.length === 0">No hay solicitudes con este filtro.</p>
+    </div>
+
+    <article class="detalle card" *ngIf="solicitudSeleccionada as solicitud; else seleccionVacia">
+      <div class="detalle-header">
+        <div>
+          <h2>{{ nombreEstudiante(solicitud) }}</h2>
+          <p>Cédula: {{ solicitud.estudiante?.cedula }}</p>
+        </div>
+        <span class="estado" [ngClass]="solicitud.estado.toLowerCase()">{{ solicitud.estado }}</span>
+      </div>
+
+      <div class="datos">
+        <div><span>Periodo</span><strong>{{ solicitud.periodoCarrera?.periodo?.nombre }}</strong></div>
+        <div><span>Carrera</span><strong>{{ solicitud.periodoCarrera?.carrera?.nombre }}</strong></div>
+        <div><span>Malla</span><strong>{{ solicitud.periodoCarrera?.versionMalla?.nombre }}</strong></div>
+        <div><span>Nivel</span><strong>{{ solicitud.paralelo?.nivel?.nombre }}</strong></div>
+        <div><span>Paralelo</span><strong>{{ solicitud.paralelo?.nombre }}</strong></div>
+        <div><span>Jornada</span><strong>{{ solicitud.periodoCarrera?.jornada }}</strong></div>
+      </div>
+
+      <h3>Documentos</h3>
+      <div class="documento" *ngFor="let documento of solicitud.documentos">
+        <div>
+          <strong>{{ nombreDocumento(documento.tipo) }}</strong>
+          <span class="estado-documento" [ngClass]="documento.estado.toLowerCase()">{{ documento.estado }}</span>
+          <p *ngIf="documento.motivoRechazo">Motivo: {{ documento.motivoRechazo }}</p>
+        </div>
+        <a [href]="urlDocumento(documento)" target="_blank" rel="noopener">Abrir PDF</a>
+
+        <div class="revision-acciones" *ngIf="documento.estado === 'PENDIENTE'">
+          <button class="aprobar" [disabled]="procesandoId === documento.id" (click)="aprobarDocumento(documento)">Aprobar</button>
+          <input [(ngModel)]="motivos[documento.id]" placeholder="Motivo si será rechazado">
+          <button class="rechazar" [disabled]="procesandoId === documento.id" (click)="rechazarDocumento(documento)">Rechazar</button>
+        </div>
+      </div>
+
+      <div class="aprobacion-final" *ngIf="solicitud.estado === 'PENDIENTE' && esSecretaria">
+        <p *ngIf="!documentosAprobados">Aprueba todos los documentos para habilitar la matrícula.</p>
+        <button [disabled]="!documentosAprobados || procesandoId === solicitud.id" (click)="aprobarSolicitud()">
+          {{ procesandoId === solicitud.id ? 'Creando matrícula...' : 'Aprobar solicitud y matricular' }}
+        </button>
+      </div>
+      <p *ngIf="solicitud.estado === 'PENDIENTE' && !esSecretaria" class="vacio">El administrador puede revisar documentos; la aprobación final corresponde a Secretaría.</p>
+    </article>
+
+    <ng-template #seleccionVacia>
+      <div class="detalle card vacio">Selecciona una solicitud para revisar sus documentos.</div>
+    </ng-template>
+  </div>
+</section>

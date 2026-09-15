@@ -1,0 +1,321 @@
+<div class="matriculas-container">
+
+  <div class="matriculas-header">
+    <h2>Matricular estudiante nuevo</h2>
+    <p>
+      Crea la ficha y la matrícula oficial de primer nivel en un solo proceso.
+    </p>
+  </div>
+
+  <form
+    [formGroup]="matriculaForm"
+    (ngSubmit)="registrar()"
+    class="matriculas-form"
+  >
+    <div *ngIf="errorGeneral" class="mensaje-form error">{{ errorGeneral }}</div>
+    <div *ngIf="mensajeExito" class="mensaje-form exito">{{ mensajeExito }}</div>
+
+    <!-- ================= INFORMACIÓN PERSONAL ================= -->
+
+    <div class="form-section">
+
+      <h3>
+        <i class="icon-user"></i>
+        Información Personal
+      </h3>
+
+      <div class="form-grid">
+
+        <!-- CÉDULA -->
+        <div class="form-group">
+
+          <label>
+            Cédula
+            <span
+              [class.texto-rojo]="
+                matriculaForm.get('cedula')?.invalid &&
+                matriculaForm.get('cedula')?.touched
+              "
+            >
+              *
+            </span>
+          </label>
+
+          <input
+            type="text"
+            inputmode="numeric"
+            formControlName="cedula"
+            maxlength="10"
+            placeholder="Ej. 1726354789"
+            (keypress)="soloNumeros($event)"
+            (input)="validarLongitud($event, 'cedula')"
+            [class.borde-rojo]="
+              matriculaForm.get('cedula')?.invalid &&
+              matriculaForm.get('cedula')?.touched
+            "
+          />
+
+          <small
+            *ngIf="
+              matriculaForm.get('cedula')?.hasError('required') &&
+              matriculaForm.get('cedula')?.touched
+            "
+          >
+            La cédula es obligatoria.
+          </small>
+
+          <small
+            *ngIf="
+              matriculaForm.get('cedula')?.hasError('pattern') &&
+              matriculaForm.get('cedula')?.touched
+            "
+          >
+            La cédula debe tener 10 dígitos.
+          </small>
+
+        </div>
+
+
+        <!-- NOMBRES -->
+        <div class="form-group">
+
+          <label>
+            Nombres
+            <span
+              [class.texto-rojo]="
+                matriculaForm.get('nombres')?.invalid &&
+                matriculaForm.get('nombres')?.touched
+              "
+            >
+              *
+            </span>
+          </label>
+
+          <input
+            type="text"
+            formControlName="nombres"
+            maxlength="60"
+            placeholder="Nombres completos"
+            [class.borde-rojo]="
+              matriculaForm.get('nombres')?.invalid &&
+              matriculaForm.get('nombres')?.touched
+            "
+          />
+          <small *ngIf="matriculaForm.get('nombres')?.hasError('required') && matriculaForm.get('nombres')?.touched">Los nombres son obligatorios.</small>
+          <small *ngIf="matriculaForm.get('nombres')?.invalid && !matriculaForm.get('nombres')?.hasError('required') && matriculaForm.get('nombres')?.touched">Use entre 2 y 60 caracteres; solo letras, espacios, apóstrofes o guiones.</small>
+
+        </div>
+
+
+        <!-- APELLIDOS -->
+        <div class="form-group">
+
+          <label>
+            Apellidos
+            <span
+              [class.texto-rojo]="
+                matriculaForm.get('apellidos')?.invalid &&
+                matriculaForm.get('apellidos')?.touched
+              "
+            >
+              *
+            </span>
+          </label>
+
+          <input
+            type="text"
+            formControlName="apellidos"
+            maxlength="60"
+            placeholder="Apellidos completos"
+            [class.borde-rojo]="
+              matriculaForm.get('apellidos')?.invalid &&
+              matriculaForm.get('apellidos')?.touched
+            "
+          />
+          <small *ngIf="matriculaForm.get('apellidos')?.hasError('required') && matriculaForm.get('apellidos')?.touched">Los apellidos son obligatorios.</small>
+          <small *ngIf="matriculaForm.get('apellidos')?.invalid && !matriculaForm.get('apellidos')?.hasError('required') && matriculaForm.get('apellidos')?.touched">Use entre 2 y 60 caracteres; solo letras, espacios, apóstrofes o guiones.</small>
+
+        </div>
+
+
+        <!-- CORREO -->
+        <div class="form-group">
+
+          <label>
+            Correo Electrónico
+            <span
+              [class.texto-rojo]="
+                matriculaForm.get('correo')?.invalid &&
+                matriculaForm.get('correo')?.touched
+              "
+            >
+              *
+            </span>
+          </label>
+
+          <input
+            type="email"
+            formControlName="correo"
+            placeholder="ejemplo@correo.com"
+            [class.borde-rojo]="
+              matriculaForm.get('correo')?.invalid &&
+              matriculaForm.get('correo')?.touched
+            "
+          />
+          <small *ngIf="matriculaForm.get('correo')?.hasError('required') && matriculaForm.get('correo')?.touched">El correo electrónico es obligatorio.</small>
+          <small *ngIf="matriculaForm.get('correo')?.hasError('email') && matriculaForm.get('correo')?.touched">Ingrese un correo electrónico válido.</small>
+
+        </div>
+
+
+        <!-- TELÉFONO -->
+        <div class="form-group">
+
+          <label>
+            Teléfono
+            <span [class.texto-rojo]="matriculaForm.get('telefono')?.invalid && matriculaForm.get('telefono')?.touched">*</span>
+          </label>
+
+          <input
+            type="text"
+            inputmode="numeric"
+            formControlName="telefono"
+            maxlength="10"
+            placeholder="0987654321"
+            (keypress)="soloNumeros($event)"
+            (input)="validarLongitud($event, 'telefono')"
+            [class.borde-rojo]="matriculaForm.get('telefono')?.invalid && matriculaForm.get('telefono')?.touched"
+          />
+          <small *ngIf="matriculaForm.get('telefono')?.hasError('required') && matriculaForm.get('telefono')?.touched">El teléfono es obligatorio.</small>
+          <small *ngIf="matriculaForm.get('telefono')?.hasError('pattern') && matriculaForm.get('telefono')?.touched">El teléfono debe tener exactamente 10 dígitos.</small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="form-section">
+      <h3>Información académica inicial</h3>
+      <p class="ayuda-flujo">Selecciona cada campo en orden. Las opciones y los cupos se actualizan según la selección anterior.</p>
+      <p *ngIf="cargandoOferta">Cargando oferta académica y cupos...</p>
+      <p *ngIf="mensajeConfiguracionOferta" class="mensaje-form error">{{ mensajeConfiguracionOferta }}</p>
+
+      <div class="form-grid" *ngIf="!cargandoOferta">
+        <div class="form-group">
+          <label>1. Carrera *</label>
+          <select [(ngModel)]="carreraId" [ngModelOptions]="{standalone: true}" (change)="cambiarCarrera()" [disabled]="carrerasDisponibles.length === 0">
+            <option value="">Selecciona una carrera</option>
+            <option *ngFor="let carrera of carrerasDisponibles" [value]="carrera.id">{{ carrera.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>2. Periodo académico *</label>
+          <select [(ngModel)]="periodoId" [ngModelOptions]="{standalone: true}" (change)="cambiarPeriodo()" [disabled]="!carreraId">
+            <option value="">Selecciona un periodo</option>
+            <option *ngFor="let periodo of periodosDisponibles" [value]="periodo.id">{{ periodo.nombre }} · {{ periodo.estado }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>3. Malla curricular *</label>
+          <select [(ngModel)]="mallaId" [ngModelOptions]="{standalone: true}" (change)="cambiarMalla()" [disabled]="!periodoId">
+            <option value="">Selecciona una malla</option>
+            <option *ngFor="let malla of mallasDisponibles" [value]="malla.id">{{ malla.codigo }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>4. Nivel *</label>
+          <select [(ngModel)]="nivelId" [ngModelOptions]="{standalone: true}" (change)="cambiarNivel()" [disabled]="!mallaId">
+            <option value="">Selecciona un nivel</option>
+            <option *ngFor="let nivel of nivelesDisponibles" [value]="nivel.id">{{ nivel.nombre || 'Nivel ' + nivel.numero }}</option>
+          </select>
+          <small>Para estudiantes nuevos el backend únicamente permite el Nivel 1.</small>
+        </div>
+
+        <div class="form-group">
+          <label>5. Jornada *</label>
+          <select [(ngModel)]="jornada" [ngModelOptions]="{standalone: true}" (change)="cambiarJornada()" [disabled]="!nivelId">
+            <option value="">Selecciona una jornada</option>
+            <option *ngFor="let item of jornadasDisponibles" [value]="item.nombre" [disabled]="!item.disponible">
+              {{ item.nombre }} · {{ item.cuposOcupados }}/{{ item.cupoMaximo }} ocupados · {{ item.cuposDisponibles }} disponibles{{ !item.disponible ? ' · SIN CUPO' : '' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>6. Paralelo *</label>
+          <select [(ngModel)]="paraleloId" [ngModelOptions]="{standalone: true}" (change)="cambiarParalelo()" [disabled]="!jornada">
+            <option value="">Selecciona un paralelo</option>
+            <option *ngFor="let paralelo of paralelos" [value]="paralelo.id" [disabled]="!paralelo.disponible">
+              {{ paralelo.nombre }} · mínimo {{ paralelo.cupoMinimo }} · {{ paralelo.cuposOcupados }}/{{ paralelo.cupoMaximo }} ocupados · {{ paralelo.cuposDisponibles }} disponibles{{ !paralelo.disponible ? ' · NO DISPONIBLE' : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="resumen-jornadas" *ngIf="jornadasDisponibles.length">
+        <article *ngFor="let item of jornadasDisponibles" [class.sin-cupo]="!item.disponible" [class.seleccionada]="item.nombre === jornada">
+          <strong>{{ item.nombre }}</strong>
+          <span>{{ item.cuposOcupados }} ocupados de {{ item.cupoMaximo }}</span>
+          <b>{{ item.cuposDisponibles }} cupos disponibles</b>
+          <small *ngIf="!item.disponible">{{ item.motivos.join(' ') || 'Selecciona otra jornada.' }}</small>
+        </article>
+      </div>
+
+      <p class="mensaje-form error" *ngIf="ofertaSeleccionada && !ofertaSeleccionada.disponible">
+        {{ ofertaSeleccionada.motivoNoDisponible }}
+      </p>
+      <p class="mensaje-form error" *ngIf="paraleloSeleccionado && !paraleloSeleccionado.disponible">
+        {{ paraleloSeleccionado.motivoNoDisponible }}
+      </p>
+    </div>
+
+    <!-- ================= INFORMACIÓN ================= -->
+
+    <div class="form-section informacion">
+
+      <h3>
+        <i class="icon-info"></i>
+        Información
+      </h3>
+
+      <p>
+        Este formulario es solamente para estudiantes nuevos. Los estudiantes antiguos envían su solicitud desde su cuenta y Secretaría la aprueba en “Solicitudes pendientes”.
+      </p>
+
+    </div>
+
+
+    <!-- ================= BOTONES ================= -->
+
+    <div class="action-buttons">
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="limpiarFormulario()"
+      >
+        Limpiar
+      </button>
+
+      <button
+  type="submit"
+  class="btn btn-primary"
+  [disabled]="guardando"
+>
+  {{
+    guardando
+      ? 'Creando matrícula...'
+      : 'Registrar y matricular'
+  }}
+</button>
+
+    </div>
+
+  </form>
+
+</div>

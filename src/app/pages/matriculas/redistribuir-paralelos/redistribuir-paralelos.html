@@ -1,0 +1,127 @@
+<div class="redistribucion-container">
+  <header>
+    <h2>Redistribuir estudiantes entre paralelos</h2>
+    <p>Filtra un paralelo que no alcanza el cupo mínimo y traslada sus estudiantes a otro paralelo compatible.</p>
+  </header>
+
+  <div class="mensaje error" *ngIf="error">{{ error }}</div>
+  <div class="mensaje exito" *ngIf="exito">{{ exito }}</div>
+
+  <section class="panel filtros">
+    <div class="campo">
+      <label>1. Carrera *</label>
+      <select [(ngModel)]="carreraFiltroId" (change)="cambiarCarrera()" [disabled]="cargandoParalelos">
+        <option value="">Seleccione la carrera</option>
+        <option *ngFor="let carrera of carrerasDisponibles" [value]="carrera.id">
+          {{ carrera.nombre }} · {{ carrera.codigo }}
+        </option>
+      </select>
+      <small *ngIf="!cargandoParalelos && carrerasDisponibles.length === 0">
+        No hay carreras con paralelos que incumplan el cupo mínimo.
+      </small>
+    </div>
+
+    <div class="campo">
+      <label>2. Nivel *</label>
+      <select [(ngModel)]="nivelFiltroId" (change)="cambiarNivel()" [disabled]="!carreraFiltroId">
+        <option value="">Seleccione el nivel</option>
+        <option *ngFor="let nivel of nivelesDisponibles" [value]="nivel.id">
+          {{ nivel.nombre || 'Nivel ' + nivel.numero }}
+        </option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>3. Paralelo con cupo insuficiente *</label>
+      <select [(ngModel)]="origenId" (change)="cambiarOrigen()" [disabled]="!nivelFiltroId">
+        <option value="">Seleccione el paralelo</option>
+        <option *ngFor="let paralelo of paralelosOrigen" [value]="paralelo.id">
+          Paralelo {{ paralelo.nombre }} · {{ paralelo.periodoCarrera.periodo.nombre }} ·
+          {{ paralelo.periodoCarrera.jornada }} · {{ paralelo.periodoCarrera.centroEstudio.nombre }} ·
+          {{ paralelo.cuposOcupados }}/{{ paralelo.cupoMinimo }} mínimo
+        </option>
+      </select>
+      <small *ngIf="nivelFiltroId && paralelosOrigen.length === 0">
+        Este nivel no tiene paralelos con estudiantes por debajo del cupo mínimo.
+      </small>
+    </div>
+
+    <div class="resumen-origen" *ngIf="origen as paralelo">
+      <div><small>Matriculados</small><strong>{{ paralelo.cuposOcupados }}</strong></div>
+      <div><small>Cupo mínimo</small><strong>{{ paralelo.cupoMinimo }}</strong></div>
+      <div><small>Cupo máximo</small><strong>{{ paralelo.cupoMaximo }}</strong></div>
+      <span class="badge-alerta">No cumple el mínimo</span>
+    </div>
+
+    <div class="campo" *ngIf="origenId">
+      <label>4. Seleccione el paralelo de destino *</label>
+      <select [(ngModel)]="destinoId">
+        <option value="">Seleccione el paralelo</option>
+        <option *ngFor="let paralelo of destinosCompatibles" [value]="paralelo.id">
+          Paralelo {{ paralelo.nombre }} · {{ paralelo.cuposOcupados }}/{{ paralelo.cupoMaximo }} ocupados · {{ paralelo.cuposDisponibles }} disponibles
+        </option>
+      </select>
+      <small *ngIf="destinosCompatibles.length === 0">
+        No existe otro paralelo del mismo periodo, carrera, jornada, centro, malla y nivel con cupos disponibles.
+      </small>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="origenId">
+    <div class="cabecera-lista">
+      <div>
+        <h3>Estudiantes matriculados en el paralelo</h3>
+        <p>Se muestran sus datos personales y todos los detalles de la matrícula.</p>
+      </div>
+      <label class="seleccionar-todos" *ngIf="estudiantes.length">
+        <input type="checkbox" [checked]="todosSeleccionados" (change)="alternarTodos()" />
+        Seleccionar todos
+      </label>
+    </div>
+
+    <div class="estado-carga" *ngIf="cargandoEstudiantes">Cargando estudiantes...</div>
+    <div class="estado-carga" *ngIf="!cargandoEstudiantes && estudiantes.length === 0">
+      Este paralelo no tiene estudiantes por redistribuir.
+    </div>
+
+    <article class="estudiante-card" *ngFor="let matricula of estudiantes"
+      [class.seleccionado]="estaSeleccionada(matricula.id)">
+      <label class="selector">
+        <input type="checkbox" [checked]="estaSeleccionada(matricula.id)"
+          (change)="alternarMatricula(matricula.id, $any($event.target).checked)" />
+      </label>
+      <div class="datos-estudiante">
+        <h4>{{ matricula.estudiante?.nombres }} {{ matricula.estudiante?.apellidos }}</h4>
+        <div class="datos-grid">
+          <span><small>Cédula</small>{{ matricula.estudiante?.cedula }}</span>
+          <span><small>Correo</small>{{ matricula.estudiante?.correo }}</span>
+          <span><small>Teléfono</small>{{ matricula.estudiante?.telefono }}</span>
+          <span><small>Estado matrícula</small>{{ matricula.estado }}</span>
+          <span><small>Tipo de matrícula</small>{{ matricula.tipo }}</span>
+          <span><small>Periodo</small>{{ matricula.periodo.nombre }}</span>
+          <span><small>Carrera</small>{{ matricula.periodoCarrera?.carrera?.nombre }}</span>
+          <span><small>Nivel</small>{{ matricula.nivel?.nombre || 'Nivel ' + matricula.nivel?.numero }}</span>
+          <span><small>Jornada / Centro</small>{{ matricula.periodoCarrera?.jornada }} · {{ matricula.periodoCarrera?.centroEstudio?.nombre }}</span>
+          <span><small>Fecha de matrícula</small>{{ matricula.fechaMatricula | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="materias" *ngIf="matricula.asignaturas?.length">
+          <strong>Asignaturas ({{ matricula.asignaturas.length }})</strong>
+          <span *ngFor="let detalle of matricula.asignaturas">
+            {{ detalle.asignaturaParalelo?.detalleMalla?.asignatura?.codigo }} ·
+            {{ detalle.asignaturaParalelo?.detalleMalla?.asignatura?.nombre }} ·
+            {{ detalle.estado }} · Promedio:
+            {{ detalle.promedioFinal === null ? 'Pendiente' : (detalle.promedioFinal | number:'1.2-2') }}
+          </span>
+        </div>
+      </div>
+    </article>
+
+    <footer class="acciones" *ngIf="estudiantes.length">
+      <span>{{ cantidadSeleccionados }} de {{ estudiantes.length }} estudiante(s) seleccionado(s)</span>
+      <button type="button" (click)="trasladar()"
+        [disabled]="trasladando || !destinoId || cantidadSeleccionados === 0">
+        {{ trasladando ? 'Cambiando paralelos...' : 'Cambiar seleccionados de paralelo' }}
+      </button>
+    </footer>
+  </section>
+</div>

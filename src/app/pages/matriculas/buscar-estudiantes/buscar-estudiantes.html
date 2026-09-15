@@ -1,0 +1,113 @@
+<div class="buscar-container">
+  <div class="buscar-header">
+    <h2>Buscar estudiantes</h2>
+    <p>Consulta la ficha personal y las matrículas académicas registradas.</p>
+  </div>
+
+  <div class="mensaje error" *ngIf="error">{{ error }}</div>
+  <div class="mensaje exito" *ngIf="exito">{{ exito }}</div>
+
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="terminoBusqueda" (keyup.enter)="buscar()"
+      placeholder="Cédula, nombres, apellidos o correo" />
+    <button type="button" class="btn-buscar" (click)="buscar()" [disabled]="cargando">
+      {{ cargando ? 'Cargando...' : 'Buscar' }}
+    </button>
+  </div>
+
+  <div class="resultados-panel" *ngIf="resultados.length > 0">
+    <h3>Resultados ({{ resultados.length }})</h3>
+    <button type="button" class="resultado-item" *ngFor="let estudiante of resultados"
+      [class.seleccionado]="estudianteSeleccionado?.id === estudiante.id"
+      (click)="seleccionar(estudiante)">
+      <span class="resultado-info">
+        <strong>{{ estudiante.nombres }} {{ estudiante.apellidos }}</strong>
+        <span>{{ estudiante.cedula }} · {{ estudiante.correo || 'Sin correo' }}</span>
+      </span>
+      <span class="ver-detalle">Ver expediente →</span>
+    </button>
+  </div>
+
+  <div class="resultados-panel"
+    *ngIf="busquedaRealizada && terminoBusqueda.trim() && resultados.length === 0">
+    <div class="sin-resultados">No se encontraron estudiantes con ese criterio.</div>
+  </div>
+
+  <section class="detalle-panel" *ngIf="estudianteSeleccionado as estudiante">
+    <div class="seccion-cabecera">
+      <div>
+        <h3>Datos personales</h3>
+        <p>La cédula identifica la ficha y no se modifica desde esta pantalla.</p>
+      </div>
+      <button *ngIf="esSecretaria && !modoEdicion" type="button" class="btn btn-editar"
+        (click)="activarEdicion()">Editar datos personales</button>
+    </div>
+
+    <div class="detalle-grid">
+      <div class="detalle-group"><label>Cédula</label><input type="text" [ngModel]="estudiante.cedula" disabled /></div>
+      <div class="detalle-group"><label>Nombres</label><input type="text" [(ngModel)]="estudiante.nombres" [disabled]="!modoEdicion" /></div>
+      <div class="detalle-group"><label>Apellidos</label><input type="text" [(ngModel)]="estudiante.apellidos" [disabled]="!modoEdicion" /></div>
+      <div class="detalle-group"><label>Correo electrónico</label><input type="email" [(ngModel)]="estudiante.correo" [disabled]="!modoEdicion" /></div>
+      <div class="detalle-group"><label>Teléfono</label><input type="text" inputmode="numeric" maxlength="10" [value]="estudiante.telefono" (input)="soloDigitosTelefono($event)" [disabled]="!modoEdicion" /></div>
+    </div>
+
+    <div class="detalle-actions" *ngIf="modoEdicion">
+      <button type="button" class="btn btn-guardar" (click)="guardarActualizacion()" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+      <button type="button" class="btn btn-cancelar" (click)="cancelarEdicion()" [disabled]="guardando">Cancelar</button>
+    </div>
+  </section>
+
+  <section class="detalle-panel" *ngIf="estudianteSeleccionado">
+    <div class="seccion-cabecera">
+      <div>
+        <h3>Historial de matrículas</h3>
+        <p>La carrera, periodo y jornada provienen de la matrícula real.</p>
+      </div>
+    </div>
+
+    <div class="sin-resultados" *ngIf="cargandoMatriculas">Cargando información académica...</div>
+    <div class="sin-resultados" *ngIf="!cargandoMatriculas && matriculas.length === 0">
+      Este estudiante todavía no tiene matrículas registradas.
+    </div>
+
+    <article class="matricula-card" *ngFor="let matricula of matriculas">
+      <div class="matricula-titulo">
+        <div>
+          <strong>{{ matricula.periodoCarrera?.carrera?.nombre || 'Carrera no disponible' }}</strong>
+          <span>{{ matricula.periodo.nombre }} · {{ matricula.tipo }}</span>
+        </div>
+        <span class="badge-estado" [ngClass]="matricula.estado.toLowerCase()">{{ matricula.estado }}</span>
+      </div>
+
+      <div class="academico-grid">
+        <div><small>Malla</small><strong>{{ matricula.versionMalla?.nombre }} ({{ matricula.versionMalla?.version }})</strong></div>
+        <div><small>Nivel</small><strong>{{ nombreNivel(matricula) }}</strong></div>
+        <div><small>Jornada</small><strong>{{ matricula.periodoCarrera?.jornada }}</strong></div>
+        <div><small>Centro</small><strong>{{ matricula.periodoCarrera?.centroEstudio?.nombre || 'No disponible' }}</strong></div>
+        <div><small>Paralelo</small><strong>{{ matricula.paralelo?.nombre }}</strong></div>
+        <div><small>Fecha</small><strong>{{ matricula.fechaMatricula | date:'dd/MM/yyyy' }}</strong></div>
+      </div>
+
+      <div class="materias" *ngIf="matricula.asignaturas?.length">
+        <small>Materias matriculadas</small>
+        <div class="materia-fila" *ngFor="let detalle of matricula.asignaturas">
+          <strong>{{ detalle.asignaturaParalelo?.detalleMalla?.asignatura?.nombre || 'Asignatura' }}</strong>
+          <span>NP1: {{ detalle.notaParcial1 === null ? '—' : (detalle.notaParcial1 | number:'1.2-2') }}</span>
+          <span>NP2: {{ detalle.notaParcial2 === null ? '—' : (detalle.notaParcial2 | number:'1.2-2') }}</span>
+          <span>Rec.: {{ detalle.notaRecuperacion === null ? '—' : (detalle.notaRecuperacion | number:'1.2-2') }}</span>
+          <span>Promedio: {{ detalle.promedioFinal === null ? 'Pendiente' : (detalle.promedioFinal | number:'1.2-2') }}</span>
+          <span>{{ detalle.estado }}</span>
+        </div>
+      </div>
+
+      <div class="matricula-acciones" *ngIf="esSecretaria && matricula.estado === 'ACTIVA'">
+        <button type="button" class="btn btn-anular" (click)="anularMatricula(matricula)"
+          [disabled]="procesandoMatriculaId === matricula.id">
+          {{ procesandoMatriculaId === matricula.id ? 'Anulando...' : 'Anular esta matrícula' }}
+        </button>
+      </div>
+    </article>
+  </section>
+</div>

@@ -1,0 +1,89 @@
+<div class="notas-container">
+  <header>
+    <h1>Registro de calificaciones</h1>
+    <p>Selecciona una asignatura que tengas asignada. Cada nota solamente puede registrarse una vez.</p>
+  </header>
+
+  <div class="mensaje error" *ngIf="error">{{ error }}</div>
+  <div class="mensaje exito" *ngIf="exito">{{ exito }}</div>
+
+  <section class="filtros-card">
+    <div class="campo">
+      <label>Periodo académico</label>
+      <select [(ngModel)]="periodoId" (change)="cambiarPeriodo()" [disabled]="cargando">
+        <option value="">Selecciona un periodo</option>
+        <option *ngFor="let periodo of periodos" [value]="periodo.id">{{ periodo.nombre }}</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label>Carrera</label>
+      <select [(ngModel)]="carreraId" (change)="cambiarCarrera()" [disabled]="!periodoId">
+        <option value="">Selecciona una carrera</option>
+        <option *ngFor="let carrera of carreras" [value]="carrera.id">{{ carrera.nombre }}</option>
+      </select>
+    </div>
+    <div class="campo ancho">
+      <label>Asignatura, nivel y paralelo</label>
+      <select [(ngModel)]="asignacionId" (change)="cargarEstudiantes()" [disabled]="!carreraId">
+        <option value="">Selecciona una asignatura</option>
+        <option *ngFor="let item of asignacionesFiltradas" [value]="item.id">
+          {{ item.detalleMalla.asignatura.codigo }} · {{ item.detalleMalla.asignatura.nombre }} ·
+          {{ item.paralelo.nivel.nombre || 'Nivel ' + item.paralelo.nivel.numero }} ·
+          {{ item.paralelo.nombre }} · {{ item.paralelo.periodoCarrera.jornada }}
+        </option>
+      </select>
+    </div>
+  </section>
+
+  <section class="estado-vacio" *ngIf="!cargando && asignaciones.length === 0">
+    <h3>No tienes materias asignadas</h3>
+    <p>Administración debe vincular tu cuenta con la ficha docente y asignarte a una materia de un paralelo.</p>
+  </section>
+
+  <section class="estado-vacio" *ngIf="cargandoEstudiantes">Cargando estudiantes matriculados...</section>
+  <section class="estado-vacio" *ngIf="asignacionId && !cargandoEstudiantes && estudiantes.length === 0">
+    No existen estudiantes matriculados en esta asignatura y paralelo.
+  </section>
+
+  <div class="tabla-card" *ngIf="estudiantes.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Estudiante</th><th>Cédula</th><th>NP1</th><th>NP2</th>
+          <th>Recuperación</th><th>Promedio</th><th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detalle of estudiantes">
+          <td><strong>{{ detalle.matricula.estudiante.apellidos }} {{ detalle.matricula.estudiante.nombres }}</strong>
+            <small *ngIf="detalle.esRepeticion">Repetición</small></td>
+          <td>{{ detalle.matricula.estudiante.cedula }}</td>
+          <td>
+            <span class="nota-guardada" *ngIf="detalle.notaParcial1 !== null">{{ detalle.notaParcial1 | number:'1.2-2' }}</span>
+            <div class="entrada" *ngIf="detalle.notaParcial1 === null">
+              <input type="number" inputmode="decimal" min="0" max="10" step="0.01" (keydown)="bloquearCaracterNumericoInvalido($event)" [(ngModel)]="entradas[detalle.id].PARCIAL_1" />
+              <button (click)="registrar(detalle, 'PARCIAL_1')" [disabled]="guardandoClave === detalle.id + '-PARCIAL_1'">Guardar</button>
+            </div>
+          </td>
+          <td>
+            <span class="nota-guardada" *ngIf="detalle.notaParcial2 !== null">{{ detalle.notaParcial2 | number:'1.2-2' }}</span>
+            <div class="entrada" *ngIf="detalle.notaParcial2 === null">
+              <input type="number" inputmode="decimal" min="0" max="10" step="0.01" (keydown)="bloquearCaracterNumericoInvalido($event)" [(ngModel)]="entradas[detalle.id].PARCIAL_2" />
+              <button (click)="registrar(detalle, 'PARCIAL_2')" [disabled]="guardandoClave === detalle.id + '-PARCIAL_2'">Guardar</button>
+            </div>
+          </td>
+          <td>
+            <span *ngIf="detalle.notaRecuperacion !== null" class="nota-guardada">{{ detalle.notaRecuperacion | number:'1.2-2' }}</span>
+            <span *ngIf="detalle.notaRecuperacion === null && !requiereRecuperacion(detalle)" class="no-aplica">No aplica</span>
+            <div class="entrada" *ngIf="detalle.notaRecuperacion === null && requiereRecuperacion(detalle)">
+              <input type="number" inputmode="decimal" min="0" max="10" step="0.01" (keydown)="bloquearCaracterNumericoInvalido($event)" [(ngModel)]="entradas[detalle.id].RECUPERACION" />
+              <button (click)="registrar(detalle, 'RECUPERACION')" [disabled]="guardandoClave === detalle.id + '-RECUPERACION'">Guardar</button>
+            </div>
+          </td>
+          <td><strong>{{ detalle.promedioFinal === null ? 'Pendiente' : (detalle.promedioFinal | number:'1.2-2') }}</strong></td>
+          <td><span class="badge" [ngClass]="detalle.estado.toLowerCase()">{{ detalle.estado }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

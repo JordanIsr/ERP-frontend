@@ -1,0 +1,95 @@
+<div class="erp-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+    <img src="/assets/logo-yavirac.jpg" alt="Educación Superior Yavirac">
+    <h3>ERP Institucional</h3>
+  </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li routerLinkActive="active" *ngIf="!esUsuario()">
+    <a routerLink="/dashboard"><i class="icon">📊</i> Panel</a>
+  </li>
+
+  <li routerLinkActive="active" *ngIf="esAdmin()">
+    <a routerLink="/users"><i class="icon">👥</i> Usuarios</a>
+  </li>
+
+  <li class="has-submenu" *ngIf="esAdmin()">
+    <a (click)="toggleAcademico()" class="menu-parent">
+      <i class="icon">⚙️</i> Gestión Académica
+      <i class="icon-arrow" [class.rotated]="academicoAbierto">▾</i>
+    </a>
+    <ul class="submenu" *ngIf="academicoAbierto">
+      <li routerLinkActive="active">
+        <a routerLink="/catalogos-base">Catálogos base</a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="/periodos-flujo">Periodos académicos</a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="/mallas">Mallas curriculares</a>
+      </li>
+    </ul>
+  </li>
+
+  <li class="has-submenu" *ngIf="esAdmin() || esSecretaria() || esEstudiante()">
+    <a (click)="toggleMatriculas()" class="menu-parent">
+      <i class="icon">📝</i> Matrículas
+      <i class="icon-arrow" [class.rotated]="matriculasAbierto">▾</i>
+    </a>
+    <ul class="submenu" *ngIf="matriculasAbierto">
+      <li routerLinkActive="active" *ngIf="esEstudiante()">
+        <a routerLink="/matriculas/solicitud">Solicitud de Matrícula</a>
+      </li>
+      <li routerLinkActive="active" *ngIf="esSecretaria()">
+        <a routerLink="/matriculas/registrar">Matricular</a>
+      </li>
+      <li routerLinkActive="active" *ngIf="esAdmin() || esSecretaria()">
+        <a routerLink="/matriculas/buscar-estudiantes">Buscar Estudiantes</a>
+      </li>
+      <li routerLinkActive="active" *ngIf="esSecretaria()">
+        <a routerLink="/matriculas/redistribuir-paralelos">Redistribuir paralelos</a>
+      </li>
+      <li routerLinkActive="active" *ngIf="esAdmin() || esSecretaria()">
+        <a routerLink="/matriculas/solicitudes">Solicitudes Pendientes</a>
+      </li>
+    </ul>
+  </li>
+
+  <li routerLinkActive="active" *ngIf="esDocente()">
+    <a routerLink="/registrar-notas"><i class="icon">✅</i> Registro de Notas</a>
+  </li>
+
+  <li routerLinkActive="active" *ngIf="esSecretaria()">
+    <a routerLink="/corregir-notas"><i class="icon">✏️</i> Corregir Notas</a>
+  </li>
+
+  <li routerLinkActive="active" *ngIf="esEstudiante()">
+    <a routerLink="/historial-academico"><i class="icon">🎓</i> Mi Historial</a>
+  </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="main-container">
+      
+      <header class="header">
+        <div class="header-title">
+          <span>Bienvenido</span>
+        </div>
+        <div class="header-user">
+  <span class="username">{{ usuarioLogueado }}</span>
+  <span class="user-role">{{ rolUsuario | titlecase }}</span>
+  <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+</div>
+      </header>
+
+      <main class="content">
+          
+        <router-outlet></router-outlet>
+        
+      </main>
+
+    </div>
+  </div>

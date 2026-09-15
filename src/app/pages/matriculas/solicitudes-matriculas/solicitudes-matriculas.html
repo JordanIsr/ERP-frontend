@@ -1,0 +1,474 @@
+<section class="pagina-solicitud">
+  <header class="encabezado">
+    <div>
+      <h1>Solicitud de matrícula</h1>
+      <p>
+        El sistema mostrará únicamente las opciones
+        académicas que te corresponden.
+      </p>
+    </div>
+  </header>
+
+  <div *ngIf="cargando" class="cargando">
+    Cargando información de matrícula...
+  </div>
+
+  <ng-container *ngIf="!cargando">
+    <div
+      *ngIf="errorGeneral"
+      class="mensaje mensaje-error"
+    >
+      {{ errorGeneral }}
+    </div>
+
+    <div
+      *ngIf="mensajeExito"
+      class="mensaje mensaje-exito"
+    >
+      {{ mensajeExito }}
+    </div>
+
+    <!-- SOLICITUD EXISTENTE -->
+    <article
+      *ngIf="solicitudActual"
+      class="tarjeta estado-solicitud"
+    >
+      <div class="estado-encabezado">
+        <div>
+          <span class="etiqueta">
+            Estado de la solicitud
+          </span>
+
+          <h2>
+            {{ nombreEstado(solicitudActual.estado) }}
+          </h2>
+        </div>
+
+        <span
+          class="estado"
+          [ngClass]="claseEstado(
+            solicitudActual.estado
+          )"
+        >
+          {{ solicitudActual.estado }}
+        </span>
+      </div>
+
+      <p *ngIf="solicitudActual.fechaEnvio">
+        Enviada:
+        {{
+          formatearFecha(
+            solicitudActual.fechaEnvio
+          )
+        }}
+      </p>
+
+      <p
+        *ngIf="solicitudActual.motivoRechazo"
+        class="motivo-rechazo"
+      >
+        <strong>Motivo:</strong>
+        {{ solicitudActual.motivoRechazo }}
+      </p>
+
+      <div class="documentos">
+        <h3>Documentos presentados</h3>
+
+        <div
+          *ngFor="
+            let documento of
+              solicitudActual.documentos
+          "
+          class="documento"
+        >
+          <span>
+            {{ nombreDocumento(documento.tipo) }}
+          </span>
+
+          <span
+            class="estado-documento"
+            [ngClass]="
+              documento.estado.toLowerCase()
+            "
+          >
+            {{ documento.estado }}
+          </span>
+
+          <small
+            *ngIf="documento.motivoRechazo"
+          >
+            {{ documento.motivoRechazo }}
+          </small>
+        </div>
+      </div>
+    </article>
+
+    <!-- REENVÍO -->
+    <article
+      *ngIf="
+        solicitudActual?.estado ===
+          'RECHAZADA' &&
+        solicitudActual?.puedeReenviar
+      "
+      class="tarjeta"
+    >
+      <h2>Corregir documentos</h2>
+
+      <p class="texto-secundario">
+        Sube nuevamente solamente los documentos
+        que fueron rechazados.
+      </p>
+
+      <div class="archivos-grid">
+        <div
+          *ngIf="
+            tieneDocumentoRechazado(
+              TipoDocumentoMatricula.CEDULA
+            )
+          "
+          class="campo-archivo"
+        >
+          <label>Copia de cédula</label>
+
+          <input
+            type="file"
+            accept=".pdf,application/pdf"
+            (change)="
+              seleccionarArchivoReenvio(
+                $event,
+                TipoDocumentoMatricula.CEDULA
+              )
+            "
+          />
+
+          <small class="archivo-seleccionado">
+            {{
+              archivosReenvio[
+                TipoDocumentoMatricula.CEDULA
+              ]?.name
+            }}
+          </small>
+
+          <small class="error-campo">
+            {{
+              erroresArchivo[
+                TipoDocumentoMatricula.CEDULA
+              ]
+            }}
+          </small>
+        </div>
+
+        <div
+          *ngIf="
+            tieneDocumentoRechazado(
+              TipoDocumentoMatricula
+                .CERTIFICADO_NO_ADEUDAR
+            )
+          "
+          class="campo-archivo"
+        >
+          <label>Certificado de no adeudar</label>
+
+          <input
+            type="file"
+            accept=".pdf,application/pdf"
+            (change)="
+              seleccionarArchivoReenvio(
+                $event,
+                TipoDocumentoMatricula
+                  .CERTIFICADO_NO_ADEUDAR
+              )
+            "
+          />
+        </div>
+
+        <div
+          *ngIf="
+            tieneDocumentoRechazado(
+              TipoDocumentoMatricula
+                .COMPROBANTE_PAGO
+            )
+          "
+          class="campo-archivo"
+        >
+          <label>Comprobante de pago</label>
+
+          <input
+            type="file"
+            accept=".pdf,application/pdf"
+            (change)="
+              seleccionarArchivoReenvio(
+                $event,
+                TipoDocumentoMatricula
+                  .COMPROBANTE_PAGO
+              )
+            "
+          />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="boton-principal"
+        [disabled]="enviando"
+        (click)="reenviarSolicitud()"
+      >
+        {{
+          enviando
+            ? 'Reenviando...'
+            : 'Reenviar documentos'
+        }}
+      </button>
+    </article>
+
+    <!-- SIN PERMISO PARA SOLICITAR -->
+    <article
+      *ngIf="
+        !solicitudActual &&
+        informacionOpciones &&
+        !informacionOpciones.puedeSolicitar
+      "
+      class="tarjeta sin-opciones"
+    >
+      <h2>No puedes solicitar matrícula todavía</h2>
+
+      <p>
+        {{ informacionOpciones.motivo }}
+      </p>
+
+      <button
+        type="button"
+        class="boton-principal"
+        (click)="cargarInformacion()"
+      >
+        Volver a comprobar disponibilidad
+      </button>
+    </article>
+
+    <!-- NUEVA SOLICITUD -->
+    <ng-container
+      *ngIf="
+        !solicitudActual &&
+        informacionOpciones?.puedeSolicitar
+      "
+    >
+      <article class="tarjeta resumen-situacion">
+        <span class="etiqueta">
+          Situación académica
+        </span>
+
+        <h2>
+          {{ informacionOpciones?.situacion }}
+        </h2>
+
+        <p>
+          {{ informacionOpciones?.motivo }}
+        </p>
+
+        <p>
+          <strong>Tipo de matrícula:</strong>
+          {{ informacionOpciones?.tipoMatricula }}
+        </p>
+      </article>
+
+      <section class="opciones">
+        <h2>Opciones permitidas</h2>
+
+        <p class="texto-secundario">
+          Estas opciones fueron calculadas con tu
+          matrícula y calificaciones anteriores.
+        </p>
+
+        <article
+          *ngFor="
+            let opcion of
+              informacionOpciones?.opciones
+          "
+          class="opcion-card"
+          [class.seleccionada]="
+            opcionSeleccionada?.paralelo?.id ===
+            opcion.paralelo.id
+          "
+          (click)="seleccionarOpcion(opcion)"
+        >
+          <div class="opcion-radio">
+            <input
+              type="radio"
+              name="opcionMatricula"
+              [checked]="
+                opcionSeleccionada?.paralelo?.id ===
+                opcion.paralelo.id
+              "
+              (change)="seleccionarOpcion(opcion)"
+            />
+          </div>
+
+          <div class="opcion-contenido">
+            <div class="opcion-titulo">
+              <h3>
+                {{ opcion.carrera.nombre }}
+              </h3>
+
+              <span class="cupo">
+                {{ opcion.paralelo.cuposDisponibles }}
+                cupos disponibles
+              </span>
+            </div>
+
+            <div class="datos-grid">
+              <div>
+                <span>Periodo</span>
+                <strong>
+                  {{ opcion.periodo.nombre }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Nivel</span>
+                <strong>
+                  {{ opcion.nivel.nombre }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Paralelo</span>
+                <strong>
+                  {{ opcion.paralelo.nombre }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Jornada</span>
+                <strong>
+                  {{ opcion.jornada }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Centro de estudio</span>
+                <strong>
+                  {{ opcion.centroEstudio.nombre }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Malla</span>
+                <strong>
+                  {{ opcion.mallaGeneral?.codigo || opcion.versionMalla.nombre }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="materias">
+              <h4>Materias que cursarás</h4>
+
+              <ul>
+                <li
+                  *ngFor="
+                    let materia of
+                      opcion.materias
+                  "
+                >
+                  <span>
+                    {{ materia.codigo }}
+                    -
+                    {{ materia.nombre }}
+                  </span>
+
+                  <span
+                    *ngIf="informacionOpciones?.tipoMatricula === 'REPETICION'"
+                    class="repeticion"
+                  >
+                    Repetición
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <article class="tarjeta">
+        <h2>Documentos requeridos</h2>
+
+        <p class="texto-secundario">
+          Los documentos deben estar en PDF y no
+          superar los 5 MB.
+        </p>
+
+        <div class="archivos-grid">
+          <div class="campo-archivo">
+            <label>Copia de cédula</label>
+
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              (change)="seleccionarCedula($event)"
+            />
+
+            <small
+              *ngIf="archivoCedula"
+              class="archivo-seleccionado"
+            >
+              {{ archivoCedula.name }}
+            </small>
+
+            <small class="error-campo">
+              {{
+                erroresArchivo[
+                  TipoDocumentoMatricula.CEDULA
+                ]
+              }}
+            </small>
+          </div>
+
+          <div class="campo-archivo">
+            <label>
+              {{
+                nombreDocumento(
+                  informacionOpciones?.documentoRequerido
+                )
+              }}
+            </label>
+
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              (change)="seleccionarRespaldo($event)"
+            />
+
+            <small
+              *ngIf="archivoRespaldo"
+              class="archivo-seleccionado"
+            >
+              {{ archivoRespaldo.name }}
+            </small>
+
+            <small class="error-campo">
+              {{
+                errorDocumento(
+                  informacionOpciones?.documentoRequerido
+                )
+              }}
+            </small>
+          </div>
+        </div>
+
+        <div class="acciones">
+          <button
+            type="button"
+            class="boton-principal"
+            [disabled]="enviando"
+            (click)="enviarSolicitud()"
+          >
+            {{
+              enviando
+                ? 'Enviando solicitud...'
+                : 'Enviar solicitud'
+            }}
+          </button>
+        </div>
+      </article>
+    </ng-container>
+  </ng-container>
+</section>

@@ -1,0 +1,224 @@
+.matriculas-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  .matriculas-header {
+    margin-bottom: 24px;
+    h2 {
+      font-size: 28px;
+      color: #1e293b;
+      margin: 0 0 4px 0;
+      font-weight: 700;
+    }
+    p {
+      color: #64748b;
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .matriculas-form {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    max-width: 1000px;
+    margin: 0 auto;
+
+    .form-section {
+      margin-bottom: 32px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 24px;
+
+      &:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      h3 {
+        font-size: 16px;
+        color: #334155;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+
+      &.tri-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      &.full-width {
+        grid-column: span 2;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #475569;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      select {
+        padding: 10px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #334155;
+        transition: all 0.2s ease;
+        background-color: #fff;
+
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        // Clases para marcar errores en la validación
+      .borde-rojo {
+        border: 1.5px solid #dc3545 !important;
+        background-color: #fff8f8 !important;
+      }
+
+      .texto-rojo {
+        color: #dc3545 !important;
+        font-weight: bold;
+      }
+    }
+
+      .file-custom {
+        position: relative;
+        border: 1px dashed #cbd5e1;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        background: #f8fafc;
+        cursor: pointer;
+
+        input[type="file"] {
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+        span {
+          font-size: 13px;
+          color: #64748b;
+        }
+      }
+
+      .status-select {
+        font-weight: 600;
+        background-color: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
+      }
+    }
+
+    /* 1. Hacer que TODOS los asteriscos (*) de los formularios sean rojos por defecto */
+label span, label th * {
+  color: #dc3545 !important; /* Color rojo de alerta */
+  font-weight: bold;
+}
+
+/* 2. El truco de magia de Angular: Poner los bordes rojos automáticamente si el campo falla */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border: 1.5px solid #dc3545 !important;
+  background-color: #fff8f8 !important; /* Un fondo rosado sutil */
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.2) !important;
+}
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+
+      .btn {
+        padding: 11px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover { transform: translateY(-1px); }
+        &:active { transform: translateY(0); }
+
+        &-primary { background-color: #2563eb; color: #fff; &:hover { background-color: #1d4ed8; } }
+      }
+    }
+  }
+}
+.mensaje-form { padding: 12px 15px; margin-bottom: 16px; border-radius: 8px; }
+.mensaje-form.error { color: #991b1b; background: #fee2e2; }
+.mensaje-form.exito { color: #166534; background: #dcfce7; }
+
+.ayuda-flujo {
+  margin: -10px 0 18px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.resumen-jornadas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    border-radius: 10px;
+    color: #1e3a8a;
+
+    strong { font-size: 14px; }
+    span { font-size: 12px; color: #475569; }
+    b { font-size: 13px; color: #166534; }
+    small { color: #991b1b; }
+
+    &.seleccionada {
+      border: 2px solid #2563eb;
+      background: #dbeafe;
+    }
+
+    &.sin-cupo {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+
+      b { color: #991b1b; }
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .matriculas-container .matriculas-form .form-grid {
+    grid-template-columns: 1fr;
+
+    .form-group.full-width { grid-column: span 1; }
+  }
+}

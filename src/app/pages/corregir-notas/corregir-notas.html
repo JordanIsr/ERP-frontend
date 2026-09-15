@@ -1,0 +1,33 @@
+<div class="correcciones-container">
+  <header><h1>Corrección de calificaciones</h1><p>Secretaría puede corregir errores del docente. Cada cambio exige un motivo y queda auditado.</p><button class="guardar" (click)="generarReportePdf()" [disabled]="generandoReporte">{{ generandoReporte ? 'Generando...' : 'Generar reporte PDF' }}</button></header>
+  <div class="mensaje error" *ngIf="error">{{ error }}</div>
+  <div class="mensaje exito" *ngIf="exito">{{ exito }}</div>
+
+  <div class="busqueda"><input [(ngModel)]="busqueda" placeholder="Buscar estudiante, cédula, carrera, periodo o materia" /></div>
+  <div class="estado" *ngIf="cargando">Cargando calificaciones...</div>
+  <div class="estado" *ngIf="!cargando && filasFiltradas.length === 0">No existen calificaciones para el criterio indicado.</div>
+
+  <div class="contenido" *ngIf="!cargando && filasFiltradas.length > 0">
+    <div class="lista">
+      <button *ngFor="let fila of filasFiltradas" (click)="seleccionar(fila)" [class.activa]="seleccionada?.detalleId === fila.detalleId">
+        <strong>{{ fila.estudiante }}</strong><span>{{ fila.cedula }} · {{ fila.asignatura }}</span>
+        <small>{{ fila.periodo }} · {{ fila.carrera }} · {{ fila.paralelo }}</small>
+      </button>
+    </div>
+
+    <section class="editor" *ngIf="seleccionada as fila; else ayuda">
+      <h3>{{ fila.estudiante }}</h3><p>{{ fila.asignatura }} · {{ fila.periodo }}</p>
+      <div class="resumen"><span>NP1 <b>{{ formatoNota(fila.notaParcial1) }}</b></span><span>NP2 <b>{{ formatoNota(fila.notaParcial2) }}</b></span><span>Rec. <b>{{ formatoNota(fila.notaRecuperacion) }}</b></span><span>Promedio <b>{{ formatoNota(fila.promedioFinal) }}</b></span></div>
+      <label>Nota que se corregirá<select [(ngModel)]="tipoNota"><option value="PARCIAL_1" [disabled]="fila.notaParcial1 === null">NP1</option><option value="PARCIAL_2" [disabled]="fila.notaParcial2 === null">NP2</option><option value="RECUPERACION" [disabled]="fila.notaRecuperacion === null">Recuperación</option></select></label>
+      <p class="actual">Valor actual: <strong>{{ formatoNota(valorActual(tipoNota)) }}</strong></p>
+      <label>Nueva nota<input type="number" inputmode="decimal" min="0" max="10" step="0.01" (keydown)="bloquearCaracterNumericoInvalido($event)" [(ngModel)]="notaNueva" /></label>
+      <label>Motivo obligatorio<textarea rows="3" [(ngModel)]="motivo" placeholder="Ej. Corrección por error de digitación del docente"></textarea></label>
+      <button class="guardar" (click)="corregir()" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar corrección' }}</button>
+
+      <div class="historial"><h4>Historial de correcciones</h4><p *ngIf="historial.length === 0">No existen correcciones anteriores.</p>
+        <article *ngFor="let item of historial"><strong>{{ etiqueta(item.tipoNota) }}: {{ formatoNota(item.valorAnterior) }} → {{ formatoNota(item.valorNuevo) }}</strong><span>{{ item.motivo }}</span><small>{{ item.fechaCorreccion | date:'dd/MM/yyyy HH:mm' }} · {{ item.corregidoPor?.nombre }}</small></article>
+      </div>
+    </section>
+    <ng-template #ayuda><section class="editor ayuda">Selecciona una materia de un estudiante para revisar y corregir sus notas.</section></ng-template>
+  </div>
+</div>

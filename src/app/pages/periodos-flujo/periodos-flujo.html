@@ -1,0 +1,248 @@
+<div class="flujo-container">
+  <div class="paso-configuracion">
+    <span>Rama 1</span>
+    <strong>Periodos académicos</strong>
+    <small>
+      Esta rama se crea independientemente de carreras y mallas.
+    </small>
+  </div>
+
+  <div class="panel-header">
+    <h2>Periodos académicos</h2>
+    <p class="descripcion">
+  Seleccione el periodo I o II y establezca libremente
+  sus fechas. La fecha de finalización debe ser posterior
+  a la fecha de inicio.
+</p>
+  </div>
+
+  <p *ngIf="error" class="mensaje-form error">
+    {{ error }}
+  </p>
+
+  <p *ngIf="mensaje" class="mensaje-form exito">
+    {{ mensaje }}
+  </p>
+
+  <div class="card">
+    <h3>Nuevo periodo</h3>
+
+    <div class="fila-form">
+      <div class="campo campo-anio">
+        <label>Año *</label>
+
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="4"
+          [(ngModel)]="anioNuevo"
+          (input)="soloDigitosAnio($event, 'nuevo')"
+          placeholder="Ej. 2027"
+        />
+      </div>
+
+      <div class="campo">
+        <label>Periodo académico *</label>
+
+        <select
+          [(ngModel)]="tipoNuevo"
+          (ngModelChange)="actualizarNuevoPeriodo()"
+        >
+          <option value="">Seleccione</option>
+          <option value="I">I</option>
+          <option value="II">II</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Nombre generado</label>
+
+        <input
+          class="campo-calculado"
+          type="text"
+          [value]="nuevoPeriodo.nombre"
+          placeholder="Se calcula automáticamente"
+          readonly
+        />
+      </div>
+
+      <div class="campo">
+  <label>Fecha de inicio *</label>
+
+  <input
+    type="date"
+    [(ngModel)]="nuevoPeriodo.fechaInicio"
+  />
+</div>
+
+<div class="campo">
+  <label>Fecha de fin *</label>
+
+  <input
+    type="date"
+    [(ngModel)]="nuevoPeriodo.fechaFin"
+    [min]="nuevoPeriodo.fechaInicio"
+  />
+</div>
+
+      <button
+        class="btn btn-crear"
+        (click)="crearPeriodo()"
+        [disabled]="guardando"
+      >
+        {{ guardando ? 'Guardando...' : 'Crear periodo' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="sin-datos" *ngIf="cargando">
+    Cargando periodos...
+  </div>
+
+  <div class="lista-tarjetas" *ngIf="!cargando">
+    <div class="sin-datos" *ngIf="periodos.length === 0">
+      Aún no hay periodos creados.
+    </div>
+
+    <div
+      class="tarjeta sin-click"
+      *ngFor="let periodo of periodos"
+    >
+      <ng-container
+        *ngIf="editandoPeriodoId !== periodo.id; else editarPeriodo"
+      >
+        <div class="tarjeta-info">
+          <strong>{{ periodo.nombre }}</strong>
+
+          <span>
+            {{ periodo.fechaInicio }} → {{ periodo.fechaFin }}
+          </span>
+        </div>
+
+        <span
+          class="badge-estado"
+          [ngClass]="periodo.estado?.toLowerCase()"
+        >
+          {{ periodo.estado === 'CERRADO' ? 'HISTÓRICO' : periodo.estado }}
+        </span>
+
+        <div class="tarjeta-acciones">
+          <button
+            class="btn-icono"
+            type="button"
+            title="Editar periodo"
+            [disabled]="periodo.estado === 'CERRADO'"
+            (click)="activarEdicionPeriodo(periodo)"
+          >
+            ✏️
+          </button>
+
+          <button
+            class="btn-icono btn-eliminar"
+            type="button"
+            title="Eliminar periodo"
+            [disabled]="periodo.estado === 'CERRADO'"
+            (click)="eliminarPeriodo(periodo)"
+          >
+            🗑️
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #editarPeriodo>
+        <div class="edicion-inline">
+          <div class="campo-edicion">
+            <label>Año *</label>
+
+            <input
+              type="text"
+              inputmode="numeric"
+              maxlength="4"
+              [(ngModel)]="anioEdicion"
+              (input)="soloDigitosAnio($event, 'edicion')"
+            />
+          </div>
+
+          <div class="campo-edicion">
+            <label>Periodo *</label>
+
+            <select
+              [(ngModel)]="tipoEdicion"
+              (ngModelChange)="actualizarPeriodoEditado()"
+            >
+              <option value="I">I</option>
+              <option value="II">II</option>
+            </select>
+          </div>
+
+          <div class="campo-edicion">
+            <label>Nombre</label>
+
+            <input
+              class="campo-calculado"
+              [value]="periodoEdit.nombre"
+              readonly
+            />
+          </div>
+
+          <div class="campo-edicion">
+  <label>Fecha de inicio *</label>
+
+  <input
+    type="date"
+    [(ngModel)]="periodoEdit.fechaInicio"
+  />
+</div>
+
+<div class="campo-edicion">
+  <label>Fecha de fin *</label>
+
+  <input
+    type="date"
+    [(ngModel)]="periodoEdit.fechaFin"
+    [min]="periodoEdit.fechaInicio"
+  />
+</div>
+          <div class="campo-edicion">
+            <label>Estado *</label>
+
+            <select [(ngModel)]="periodoEdit.estado">
+              <option value="PLANIFICADO">PLANIFICADO</option>
+              <option value="ACTIVO">ACTIVO</option>
+              <option value="CERRADO">HISTÓRICO</option>
+            </select>
+          </div>
+
+          <div class="acciones-edicion">
+            <button
+              class="btn btn-guardar"
+              (click)="guardarEdicionPeriodo(periodo.id)"
+              [disabled]="guardando"
+            >
+              {{ guardando ? 'Guardando...' : 'Guardar' }}
+            </button>
+
+            <button
+              class="btn btn-cancelar"
+              (click)="cancelarEdicion()"
+              [disabled]="guardando"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="navegacion-flujo">
+    <span>
+      La rama de periodos ya puede quedar creada. Continúa con la malla
+      general.
+    </span>
+
+    <a class="btn-siguiente-flujo" routerLink="/mallas">
+      Ir a Mallas →
+    </a>
+  </div>
+</div>

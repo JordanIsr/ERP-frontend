@@ -1,0 +1,139 @@
+<div class="users-container">
+  <div class="users-header">
+    <h2>Gestión de Usuarios</h2>
+
+    <p>
+      Administra las cuentas, asigna roles y controla
+      el acceso al sistema.
+    </p>
+  </div>
+
+  <div
+    class="mensaje-usuarios error"
+    *ngIf="mensajeError">
+
+    <strong>No se pudo cambiar el rol</strong>
+    <span>{{ mensajeError }}</span>
+  </div>
+
+  <div
+    class="mensaje-usuarios exito"
+    *ngIf="mensajeExito">
+
+    <strong>Rol actualizado</strong>
+    <span>{{ mensajeExito }}</span>
+  </div>
+
+  <div
+    class="estado-carga"
+    *ngIf="cargando">
+
+    Cargando usuarios...
+  </div>
+
+  <div
+    class="tabla-panel"
+    *ngIf="!cargando">
+
+    <div
+      class="sin-datos"
+      *ngIf="usuarios.length === 0">
+
+      No hay usuarios registrados todavía.
+    </div>
+
+    <table
+      class="tabla-usuarios"
+      *ngIf="usuarios.length > 0">
+
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Rol asignado</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>
+            <div class="usuario-identidad">
+              <span class="usuario-avatar">
+                {{
+                  usuario.nombre
+                    ?.charAt(0)
+                    ?.toUpperCase()
+                }}
+              </span>
+
+              <div>
+                <strong>{{ usuario.nombre }}</strong>
+                <small>
+                  {{ usuario.cedula || 'Sin cédula registrada' }}
+                </small>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <select
+              [(ngModel)]="usuario.role"
+              (change)="cambiarRol(usuario)"
+              [disabled]="guardandoId === usuario.id">
+
+              <option
+                *ngFor="let rol of roles"
+                [value]="rol">
+
+                {{ rol | titlecase }}
+              </option>
+            </select>
+
+            <small
+              class="guardando"
+              *ngIf="guardandoId === usuario.id">
+
+              Guardando...
+            </small>
+          </td>
+
+          <td>
+            <span
+              class="badge-estado"
+              [ngClass]="
+                usuario.isActive
+                  ? 'activo'
+                  : 'inactivo'
+              ">
+
+              {{
+                usuario.isActive
+                  ? 'Activo'
+                  : 'Inactivo'
+              }}
+            </span>
+          </td>
+
+          <td>
+            <button
+              type="button"
+              class="btn-desactivar"
+              *ngIf="usuario.isActive"
+              (click)="desactivar(usuario)">
+
+              Desactivar
+            </button>
+
+            <span
+              class="cuenta-inactiva"
+              *ngIf="!usuario.isActive">
+
+              Cuenta desactivada
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

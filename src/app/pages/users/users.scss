@@ -1,0 +1,231 @@
+.users-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family:
+    'Segoe UI',
+    Tahoma,
+    Geneva,
+    Verdana,
+    sans-serif;
+}
+
+.users-header {
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 6px;
+    color: #1e293b;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.mensaje-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+
+  &.error {
+    color: #991b1b;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+
+  &.exito {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+
+  span {
+    font-size: 13px;
+  }
+}
+
+.estado-carga,
+.sin-datos {
+  padding: 40px 20px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.tabla-panel {
+  padding: 12px;
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e8edf3;
+  border-radius: 14px;
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.tabla-usuarios {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 13px 16px;
+    color: #64748b;
+    border-bottom: 2px solid #f1f5f9;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 12px;
+  }
+
+  td {
+    padding: 15px 16px;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition:
+      background-color 0.15s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  select {
+    min-width: 130px;
+    padding: 9px 12px;
+    color: #1e293b;
+    background: #ffffff;
+    border: 1px solid #dbe3ec;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow:
+        0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+}
+
+.usuario-identidad {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  strong {
+    color: #172033;
+    font-size: 14px;
+  }
+
+  small {
+    color: #94a3b8;
+    font-size: 12px;
+  }
+}
+
+.usuario-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #4338ca,
+      #6366f1
+    );
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.guardando {
+  display: block;
+  margin-top: 4px;
+  color: #6366f1;
+  font-size: 11px;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &.activo {
+    color: #166534;
+    background: #dcfce7;
+  }
+
+  &.inactivo {
+    color: #991b1b;
+    background: #fee2e2;
+  }
+}
+
+.btn-desactivar {
+  padding: 8px 14px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: none;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #fee2e2;
+  }
+}
+
+.cuenta-inactiva {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  .users-container {
+    padding: 16px;
+  }
+
+  .tabla-panel {
+    padding: 6px;
+  }
+
+  .tabla-usuarios {
+    min-width: 800px;
+  }
+}

@@ -1,0 +1,82 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h2>Crear Cuenta</h2>
+      <p>Regístrese para acceder al ERP</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="cedula">Usuario (cédula)</label>
+        <input id="cedula" type="text" inputmode="numeric" autocomplete="username" maxlength="10"
+          formControlName="cedula" (input)="soloDigitos($event)" placeholder="Los 10 dígitos de su cédula"
+          [class.is-invalid]="registerForm.get('cedula')?.invalid && registerForm.get('cedula')?.touched">
+        <div class="error-message" *ngIf="registerForm.get('cedula')?.invalid && registerForm.get('cedula')?.touched">
+          <span *ngIf="registerForm.get('cedula')?.errors?.['required']">El usuario (cédula) es obligatorio.</span>
+          <span *ngIf="registerForm.get('cedula')?.errors?.['pattern']">Ingrese exactamente 10 dígitos; no se permiten letras.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" autocomplete="new-password" maxlength="100" formControlName="password" placeholder="Puede usar su cédula u otra contraseña"
+          [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+        <div class="error-message" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">La contraseña debe tener mínimo 6 caracteres.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['maxlength']">La contraseña no puede superar 100 caracteres.</span>
+        </div>
+      </div>
+
+      <section class="consentimiento">
+        <div class="consentimiento-encabezado">
+          <div><h3>Política de Privacidad</h3><p>Revise el tratamiento de sus datos antes de crear la cuenta.</p></div>
+          <span>Obligatorio</span>
+        </div>
+        <details class="politica-desplegable">
+          <summary>Leer la Política de Privacidad</summary>
+          <div class="consentimiento-texto">
+            <p>Al crear una cuenta, usted autoriza de manera libre, expresa, específica e informada al Instituto para recopilar, almacenar, consultar, actualizar y utilizar sus datos personales.</p>
+            <p>Los datos serán utilizados exclusivamente para:</p>
+            <ul>
+              <li>Gestionar su registro, autenticación y autorización dentro del ERP.</li>
+              <li>Administrar matrículas, documentos, calificaciones e historial académico.</li>
+              <li>Atender solicitudes y cumplir obligaciones institucionales y legales.</li>
+            </ul>
+            <p>La información será tratada conforme a la Ley Orgánica de Protección de Datos Personales del Ecuador. No será compartida con terceros salvo obligación legal o necesidad institucional debidamente justificada.</p>
+            <p>Usted podrá ejercer sus derechos de acceso, rectificación, actualización, eliminación, oposición, portabilidad y suspensión mediante los canales oficiales del Instituto.</p>
+          </div>
+        </details>
+        <label class="aceptacion" for="aceptaPoliticaPrivacidad">
+          <input id="aceptaPoliticaPrivacidad" type="checkbox" formControlName="aceptaPoliticaPrivacidad">
+          <span>He leído y acepto la Política de Privacidad y autorizo el tratamiento de mis datos personales.</span>
+        </label>
+        <div class="error-message" *ngIf="registerForm.get('aceptaPoliticaPrivacidad')?.invalid && registerForm.get('aceptaPoliticaPrivacidad')?.touched">Debe aceptar la Política de Privacidad para crear su cuenta.</div>
+      </section>
+
+      <div
+        class="backend-error"
+        *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn-submit"
+        [disabled]="isLoading">
+
+        {{ isLoading ? 'Registrando...' : 'Crear cuenta' }}
+      </button>
+
+      <div class="register-link">
+        ¿Ya tienes una cuenta?
+
+        <a routerLink="/login">
+          Inicia sesión aquí
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>

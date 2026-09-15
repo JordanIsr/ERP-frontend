@@ -1,0 +1,508 @@
+<div class="catalog-page">
+
+  <!-- ENCABEZADO -->
+  <header class="hero">
+    <div>
+      <span>Configuración institucional</span>
+
+      <h1>Catálogos base</h1>
+
+      <p>
+        Cree y administre los docentes y centros de estudio
+        utilizados en la configuración académica.
+      </p>
+    </div>
+
+    <div class="hero-mark">CATÁLOGOS</div>
+  </header>
+
+  <!-- MENSAJES -->
+  <div class="alert error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="alert success" *ngIf="mensaje">
+    {{ mensaje }}
+  </div>
+
+  <!-- PESTAÑAS -->
+  <nav class="catalog-tabs">
+    <button
+      type="button"
+      [class.active]="catalogoActivo === 'DOCENTES'"
+      (click)="catalogoActivo = 'DOCENTES'"
+    >
+      👨‍🏫 Docentes
+    </button>
+
+    <button
+      type="button"
+      [class.active]="catalogoActivo === 'CENTROS'"
+      (click)="catalogoActivo = 'CENTROS'"
+    >
+      🏫 Centros de estudio
+    </button>
+  </nav>
+
+  <!-- ========================================= -->
+  <!-- DOCENTES -->
+  <!-- ========================================= -->
+
+  <ng-container *ngIf="catalogoActivo === 'DOCENTES'">
+
+    <!-- FORMULARIO DOCENTE -->
+    <section class="panel form-panel">
+      <div class="title">
+        <div>
+          <small>Formulario obligatorio</small>
+
+          <h2>
+            {{ editandoId ? 'Editar docente' : 'Crear docente' }}
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="secondary"
+          *ngIf="editandoId"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar edición
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Cédula *
+
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="10"
+            [(ngModel)]="formulario.cedula"
+            (input)="soloDigitos($event)"
+            placeholder="10 dígitos"
+          />
+        </label>
+
+        <label>
+          Nombres *
+
+          <input
+            maxlength="60"
+            [(ngModel)]="formulario.nombres"
+            placeholder="Nombres completos"
+          />
+        </label>
+
+        <label>
+          Apellidos *
+
+          <input
+            maxlength="60"
+            [(ngModel)]="formulario.apellidos"
+            placeholder="Apellidos completos"
+          />
+        </label>
+
+        <label>
+          Correo electrónico *
+
+          <input
+            type="email"
+            maxlength="120"
+            [(ngModel)]="formulario.correo"
+            placeholder="docente@instituto.edu.ec"
+          />
+        </label>
+
+        <label>
+          Estado *
+
+          <select [(ngModel)]="formulario.estado">
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="INACTIVO">INACTIVO</option>
+          </select>
+
+          <small>
+            Solo los activos pueden recibir nuevas asignaturas.
+          </small>
+        </label>
+      </div>
+
+      <button
+        type="button"
+        class="primary save"
+        (click)="guardar()"
+        [disabled]="guardando"
+      >
+        {{
+          guardando
+            ? 'Guardando...'
+            : editandoId
+              ? 'Guardar cambios'
+              : 'Crear docente'
+        }}
+      </button>
+    </section>
+
+    <!-- LISTADO DOCENTES -->
+    <section class="panel">
+      <div class="title">
+        <div>
+          <small>Consulta rápida</small>
+          <h2>Docentes registrados</h2>
+        </div>
+
+        <span class="count">{{ docentes.length }}</span>
+      </div>
+
+      <div class="filters">
+        <label>
+          Buscar por cédula, nombres o apellidos
+
+          <div class="search">
+            <span>🔎</span>
+
+            <input
+              [(ngModel)]="filtro"
+              (keyup.enter)="cargarDocentes()"
+              placeholder="Escriba y presione Enter"
+            />
+          </div>
+        </label>
+
+        <label>
+          Estado
+
+          <select
+            [(ngModel)]="estadoFiltro"
+            (change)="cargarDocentes()"
+          >
+            <option value="">Todos</option>
+            <option value="ACTIVO">ACTIVOS</option>
+            <option value="INACTIVO">INACTIVOS</option>
+          </select>
+        </label>
+
+        <button
+          type="button"
+          class="primary"
+          (click)="cargarDocentes()"
+        >
+          Buscar
+        </button>
+
+        <button
+          type="button"
+          class="secondary"
+          (click)="limpiarFiltro()"
+        >
+          Limpiar
+        </button>
+      </div>
+
+      <p class="empty" *ngIf="cargando">
+        Cargando docentes...
+      </p>
+
+      <p
+        class="empty"
+        *ngIf="!cargando && docentes.length === 0"
+      >
+        No existen docentes que coincidan con los filtros.
+      </p>
+
+      <div
+        class="table-wrap"
+        *ngIf="!cargando && docentes.length > 0"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Cédula</th>
+              <th>Docente</th>
+              <th>Correo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let docente of docentes">
+              <td class="mono">
+                {{ docente.cedula }}
+              </td>
+
+              <td>
+                <strong>
+                  {{ docente.apellidos }} {{ docente.nombres }}
+                </strong>
+              </td>
+
+              <td>
+                {{ docente.correo }}
+              </td>
+
+              <td>
+                <span
+                  class="state"
+                  [class.off]="docente.estado === 'INACTIVO'"
+                >
+                  {{ docente.estado }}
+                </span>
+              </td>
+
+              <td>
+                <div class="actions">
+                  <button
+                    type="button"
+                    (click)="editar(docente)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    [class.activate]="docente.estado === 'INACTIVO'"
+                    [class.deactivate]="docente.estado === 'ACTIVO'"
+                    (click)="cambiarEstado(docente)"
+                  >
+                    {{
+                      docente.estado === 'ACTIVO'
+                        ? 'Inactivar'
+                        : 'Activar'
+                    }}
+                  </button>
+
+                  <button
+                    type="button"
+                    class="danger"
+                    (click)="eliminar(docente)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </ng-container>
+
+  <!-- ========================================= -->
+  <!-- CENTROS DE ESTUDIO -->
+  <!-- ========================================= -->
+
+  <ng-container *ngIf="catalogoActivo === 'CENTROS'">
+
+    <!-- FORMULARIO CENTRO -->
+    <section class="panel form-panel">
+      <div class="title">
+        <div>
+          <small>Formulario obligatorio</small>
+
+          <h2>
+            {{
+              centroEditandoId
+                ? 'Editar centro de estudio'
+                : 'Crear centro de estudio'
+            }}
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="secondary"
+          *ngIf="centroEditandoId"
+          (click)="cancelarEdicionCentro()"
+        >
+          Cancelar edición
+        </button>
+      </div>
+
+      <div class="center-form-grid">
+        <label>
+          Nombre del centro *
+
+          <input
+            maxlength="100"
+            [(ngModel)]="formularioCentro.nombre"
+            placeholder="Ej. Campus Centro Histórico"
+          />
+        </label>
+
+        <label>
+          Código *
+
+          <input
+            maxlength="15"
+            [(ngModel)]="formularioCentro.codigo"
+            (ngModelChange)="
+              formularioCentro.codigo = $event.toUpperCase()
+            "
+            placeholder="Ej. CCH"
+          />
+        </label>
+
+        <label>
+          Estado *
+
+          <select
+            [(ngModel)]="formularioCentro.estado"
+            [disabled]="!centroEditandoId"
+          >
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="INACTIVO">INACTIVO</option>
+          </select>
+
+          <small>
+            Solo los centros activos aparecen al configurar ofertas.
+          </small>
+        </label>
+      </div>
+
+      <button
+        type="button"
+        class="primary save"
+        (click)="guardarCentro()"
+        [disabled]="guardandoCentro"
+      >
+        {{
+          guardandoCentro
+            ? 'Guardando...'
+            : centroEditandoId
+              ? 'Guardar cambios'
+              : 'Crear centro'
+        }}
+      </button>
+    </section>
+
+    <!-- LISTADO CENTROS -->
+    <section class="panel">
+      <div class="title">
+        <div>
+          <small>Consulta rápida</small>
+          <h2>Centros de estudio registrados</h2>
+        </div>
+
+        <span class="count">
+          {{ centrosFiltrados.length }}
+        </span>
+      </div>
+
+      <div class="center-filters">
+        <label>
+          Buscar por nombre o código
+
+          <div class="search">
+            <span>🔎</span>
+
+            <input
+              [(ngModel)]="filtroCentro"
+              placeholder="Ej. CCH o Centro Histórico"
+            />
+          </div>
+        </label>
+
+        <label>
+          Estado
+
+          <select [(ngModel)]="estadoCentroFiltro">
+            <option value="">Todos</option>
+            <option value="ACTIVO">ACTIVOS</option>
+            <option value="INACTIVO">INACTIVOS</option>
+          </select>
+        </label>
+
+        <button
+          type="button"
+          class="secondary"
+          (click)="limpiarFiltroCentro()"
+        >
+          Limpiar
+        </button>
+      </div>
+
+      <p
+        class="empty"
+        *ngIf="centrosFiltrados.length === 0"
+      >
+        No existen centros de estudio que coincidan con los filtros.
+      </p>
+
+      <div
+        class="table-wrap"
+        *ngIf="centrosFiltrados.length > 0"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Centro de estudio</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let centro of centrosFiltrados">
+              <td class="mono">
+                {{ centro.codigo }}
+              </td>
+
+              <td>
+                <strong>{{ centro.nombre }}</strong>
+              </td>
+
+              <td>
+                <span
+                  class="state"
+                  [class.off]="centro.estado === 'INACTIVO'"
+                >
+                  {{ centro.estado }}
+                </span>
+              </td>
+
+              <td>
+                <div class="actions">
+                  <button
+                    type="button"
+                    (click)="editarCentro(centro)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    [class.activate]="centro.estado === 'INACTIVO'"
+                    [class.deactivate]="centro.estado === 'ACTIVO'"
+                    (click)="cambiarEstadoCentro(centro)"
+                  >
+                    {{
+                      centro.estado === 'ACTIVO'
+                        ? 'Inactivar'
+                        : 'Activar'
+                    }}
+                  </button>
+
+                  <button
+                    type="button"
+                    class="danger"
+                    (click)="eliminarCentro(centro)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </ng-container>
+
+</div>

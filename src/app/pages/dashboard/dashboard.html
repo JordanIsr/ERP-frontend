@@ -1,0 +1,158 @@
+<div class="dashboard-container">
+  <section class="bienvenida">
+    <span>{{ rol | titlecase }}</span>
+
+    <h1>Bienvenido, {{ nombre }}</h1>
+
+    <p>{{ mensaje }}</p>
+  </section>
+
+  <section
+    class="alertas-paralelos"
+    *ngIf="
+      rol === 'secretaria' &&
+      paralelosVisibles.length > 0
+    "
+  >
+    <header>
+      <div>
+        <span>⚠️ Atención requerida</span>
+
+        <h2>
+          Paralelos que no cumplen el cupo mínimo
+        </h2>
+
+        <p>
+          Revise y redistribuya los estudiantes
+          antes de eliminar el paralelo.
+        </p>
+      </div>
+
+      <a
+        routerLink="/matriculas/redistribuir-paralelos"
+      >
+        Redistribuir estudiantes
+      </a>
+    </header>
+
+    <article
+      *ngFor="
+        let paralelo of paralelosVisibles
+      "
+    >
+      <div>
+        <strong>
+          {{
+            paralelo
+              .periodoCarrera
+              .carrera.nombre
+          }}
+        </strong>
+
+        <span>
+          {{
+            paralelo.nivel.nombre ||
+            'Nivel ' + paralelo.nivel.numero
+          }}
+          · Paralelo {{ paralelo.nombre }}
+        </span>
+
+        <small>
+          {{
+            paralelo
+              .periodoCarrera
+              .periodo.nombre
+          }}
+          ·
+          {{
+            paralelo
+              .periodoCarrera
+              .jornada
+          }}
+          ·
+          {{
+            paralelo
+              .periodoCarrera
+              .centroEstudio.nombre
+          }}
+        </small>
+
+        <p>
+          {{ accionRequerida(paralelo) }}
+        </p>
+      </div>
+
+      <div class="contador-cupos">
+        <strong>
+          {{ paralelo.cuposOcupados }}
+          /
+          {{ paralelo.cupoMinimo }}
+        </strong>
+
+        <small>
+          Matriculados / mínimo
+        </small>
+      </div>
+
+      <button
+        type="button"
+        title="Ocultar este aviso"
+        (click)="ocultarAlerta(paralelo.id)"
+      >
+        ×
+      </button>
+    </article>
+  </section>
+
+  <div
+    class="error-alertas"
+    *ngIf="errorAlertas"
+  >
+    {{ errorAlertas }}
+  </div>
+
+  <div
+    class="cargando-alertas"
+    *ngIf="
+      rol === 'secretaria' &&
+      cargandoAlertas
+    "
+  >
+    Verificando cupos mínimos...
+  </div>
+
+  <section
+    class="accesos"
+    *ngIf="accesos.length"
+  >
+    <a
+      *ngFor="let acceso of accesos"
+      [routerLink]="acceso.ruta"
+    >
+      <i>{{ acceso.icono }}</i>
+
+      <div>
+        <h3>{{ acceso.titulo }}</h3>
+
+        <p>{{ acceso.descripcion }}</p>
+      </div>
+
+      <b>→</b>
+    </a>
+  </section>
+
+  <section
+    class="pendiente"
+    *ngIf="rol === 'usuario'"
+  >
+    <h3>
+      Cuenta pendiente de autorización
+    </h3>
+
+    <p>
+      No necesitas registrarte nuevamente.
+      Cuando Administración asigne tu rol,
+      cierra sesión y vuelve a ingresar.
+    </p>
+  </section>
+</div>

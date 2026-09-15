@@ -1,0 +1,14 @@
+<div class="historial-container">
+  <header><h1>Mi historial académico</h1><p>Consulta tus matrículas, materias y calificaciones oficiales.</p></header>
+  <div class="estado" *ngIf="cargando">Cargando historial...</div>
+  <div class="estado error" *ngIf="error">{{ error }}</div>
+  <div class="estado" *ngIf="!cargando && !error && matriculas.length === 0">Todavía no tienes matrículas registradas.</div>
+
+  <article class="periodo-card" *ngFor="let matricula of matriculas">
+    <div class="titulo"><div><h2>{{ matricula.periodo.nombre }}</h2><p>{{ matricula.periodoCarrera?.carrera?.nombre }} · {{ nivel(matricula) }} · {{ matricula.paralelo?.nombre }}</p></div><span [ngClass]="matricula.estado.toLowerCase()">{{ matricula.estado }}</span></div>
+    <div class="datos"><span><small>Malla</small>{{ matricula.versionMalla?.nombre }} ({{ matricula.versionMalla?.version }})</span><span><small>Jornada</small>{{ matricula.periodoCarrera?.jornada }}</span><span><small>Tipo</small>{{ matricula.tipo }}</span></div>
+    <div class="tabla"><table><thead><tr><th>Asignatura</th><th>NP1</th><th>NP2</th><th>Recuperación</th><th>Promedio</th><th>Estado</th></tr></thead><tbody>
+      <tr *ngFor="let detalle of matricula.asignaturas"><td>{{ detalle.asignaturaParalelo?.detalleMalla?.asignatura?.codigo }} · {{ detalle.asignaturaParalelo?.detalleMalla?.asignatura?.nombre }}</td><td>{{ detalle.notaParcial1 === null ? '—' : (detalle.notaParcial1 | number:'1.2-2') }}</td><td>{{ detalle.notaParcial2 === null ? '—' : (detalle.notaParcial2 | number:'1.2-2') }}</td><td>{{ detalle.notaRecuperacion === null ? '—' : (detalle.notaRecuperacion | number:'1.2-2') }}</td><td><strong>{{ detalle.promedioFinal === null ? 'Pendiente' : (detalle.promedioFinal | number:'1.2-2') }}</strong></td><td><span class="materia-estado" [ngClass]="detalle.estado.toLowerCase()">{{ detalle.estado }}</span></td></tr>
+    </tbody></table></div>
+  </article>
+</div>

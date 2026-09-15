@@ -1,0 +1,93 @@
+/* Fondo que ocupa toda la pantalla y centra el contenido */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f6f9; /* Color de fondo gris claro institucional */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tarjeta blanca del login */
+.login-card {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+
+  h2 {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    font-size: 24px;
+  }
+
+  p {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+/* Estilos de los inputs */
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    box-sizing: border-box; /* Para que el padding no rompa el ancho */
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #3498db; /* Azul institucional al hacer click */
+    }
+
+    /* Clase que se activa si hay un error en la validación */
+    &.is-invalid {
+      border-color: #e74c3c;
+    }
+  }
+}
+
+/* Textos de error en rojo */
+.error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Botón principal */
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+
+}

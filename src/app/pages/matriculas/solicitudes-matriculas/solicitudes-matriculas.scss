@@ -1,0 +1,314 @@
+.pagina-solicitud {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 24px;
+  color: #161f38;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+  }
+
+  p {
+    margin: 0;
+    color: #687086;
+  }
+}
+
+.cargando {
+  padding: 48px;
+  text-align: center;
+  color: #687086;
+}
+
+.tarjeta {
+  margin-bottom: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e4e9;
+  border-radius: 12px;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+}
+
+.mensaje {
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border-radius: 8px;
+}
+
+.mensaje-error {
+  color: #8f1d1d;
+  background: #fdecec;
+  border: 1px solid #dc2626;
+}
+
+.mensaje-exito {
+  color: #14532d;
+  background: #e9f9ef;
+  border: 1px solid #16a34a;
+}
+
+.etiqueta {
+  color: #687086;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.texto-secundario {
+  color: #687086;
+}
+
+.estado-encabezado,
+.opcion-titulo {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.estado,
+.estado-documento,
+.cupo,
+.repeticion {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.estado.pendiente,
+.estado-documento.pendiente {
+  color: #8a5800;
+  background: #fff3cd;
+}
+
+.estado.aprobada,
+.estado-documento.aprobado {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.estado.rechazada,
+.estado-documento.rechazado {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.motivo-rechazo {
+  padding: 12px;
+  color: #8f1d1d;
+  background: #fff5f5;
+  border-radius: 8px;
+}
+
+.documentos {
+  margin-top: 20px;
+
+  h3 {
+    font-size: 15px;
+  }
+}
+
+.documento {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eceef2;
+
+  small {
+    grid-column: 1 / -1;
+    color: #8f1d1d;
+  }
+}
+
+.opciones {
+  margin-bottom: 22px;
+
+  > h2 {
+    margin-bottom: 4px;
+  }
+}
+
+.opcion-card {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 20px;
+  background: #ffffff;
+  border: 2px solid #e2e4e9;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    border-color: #ff9b66;
+  }
+
+  &.seleccionada {
+    border-color: #ff7124;
+    box-shadow: 0 0 0 3px
+      rgba(255, 113, 36, 0.12);
+  }
+}
+
+.opcion-radio {
+  padding-top: 4px;
+
+  input {
+    accent-color: #ff7124;
+  }
+}
+
+.opcion-contenido {
+  flex: 1;
+}
+
+.opcion-titulo {
+  h3 {
+    margin: 0;
+  }
+}
+
+.cupo {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.datos-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  span {
+    color: #687086;
+    font-size: 12px;
+  }
+
+  strong {
+    font-size: 14px;
+  }
+}
+
+.materias {
+  margin-top: 18px;
+
+  h4 {
+    margin: 0 0 8px;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eceef2;
+    font-size: 14px;
+  }
+}
+
+.repeticion {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.archivos-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.campo-archivo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  label {
+    font-weight: 600;
+  }
+
+  input {
+    padding: 11px;
+    border: 1px solid #d7dae1;
+    border-radius: 7px;
+  }
+}
+
+.archivo-seleccionado {
+  color: #166534;
+}
+
+.error-campo {
+  color: #dc2626;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.boton-principal {
+  padding: 11px 22px;
+  color: #ffffff;
+  background: #ff7124;
+  border: 0;
+  border-radius: 7px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #e7601a;
+  }
+
+  &:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+}
+
+.sin-opciones {
+  text-align: center;
+}
+
+@media (max-width: 650px) {
+  .pagina-solicitud {
+    padding: 16px;
+  }
+
+  .estado-encabezado,
+  .opcion-titulo {
+    flex-direction: column;
+  }
+
+  .opcion-card {
+    padding: 16px;
+  }
+}
