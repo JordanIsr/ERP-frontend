@@ -16,6 +16,7 @@ import { CorregirNotas } from './pages/corregir-notas/corregir-notas';
 import { Mallas } from './pages/mallas/mallas';
 import { CatalogosBase } from './pages/catalogos-base/catalogos-base';
 import { RedistribuirParalelos } from './pages/matriculas/redistribuir-paralelos/redistribuir-paralelos';
+import { Settings } from './pages/settings/settings';
 
 export const routes: Routes = [
   // 1. Redirigir la ruta raíz por defecto al login (o al dashboard, si el guard lo permite)
@@ -126,6 +127,13 @@ export const routes: Routes = [
   component: SolicitudesMatriculas,
   canActivate: [authGuard],
   data: {roles: ['estudiante'],}
+},
+
+{
+  path: 'settings',
+  component: Settings,
+  canActivate: [authGuard],
+  data: {roles: [ 'admin', 'secretaria', 'docente', 'estudiante', 'usuario'],}
 },
 
 { path: '**', redirectTo: 'dashboard' },
