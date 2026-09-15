@@ -79,7 +79,6 @@ export const routes: Routes = [
 },
 
 { path: 'gestion-academica', redirectTo: 'dashboard', pathMatch: 'full' },
-{ path: 'settings', redirectTo: 'dashboard', pathMatch: 'full' },
 
 { path: 'configuracion-academica', redirectTo: 'mallas', pathMatch: 'full' },
 
@@ -133,7 +132,7 @@ export const routes: Routes = [
   path: 'settings',
   component: Settings,
   canActivate: [authGuard],
-  data: {roles: [ 'admin', 'secretaria', 'docente', 'estudiante', 'usuario'],}
+  data: {roles: ['admin', 'secretaria', 'docente', 'estudiante', 'usuario'],}
 },
 
 { path: '**', redirectTo: 'dashboard' },

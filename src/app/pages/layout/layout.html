@@ -8,16 +8,15 @@
       <nav class="sidebar-menu">
         <ul>
           <li routerLinkActive="active" *ngIf="!esUsuario()">
-    <a routerLink="/dashboard"><i class="icon">📊</i> Panel</a>
+    <a routerLink="/dashboard"> Panel</a>
   </li>
 
   <li routerLinkActive="active" *ngIf="esAdmin()">
-    <a routerLink="/users"><i class="icon">👥</i> Usuarios</a>
+    <a routerLink="/users"> Usuarios</a>
   </li>
 
   <li class="has-submenu" *ngIf="esAdmin()">
-    <a (click)="toggleAcademico()" class="menu-parent">
-      <i class="icon">⚙️</i> Gestión Académica
+    <a (click)="toggleAcademico()" class="menu-parent"> Gestión Académica
       <i class="icon-arrow" [class.rotated]="academicoAbierto">▾</i>
     </a>
     <ul class="submenu" *ngIf="academicoAbierto">
@@ -34,8 +33,7 @@
   </li>
 
   <li class="has-submenu" *ngIf="esAdmin() || esSecretaria() || esEstudiante()">
-    <a (click)="toggleMatriculas()" class="menu-parent">
-      <i class="icon">📝</i> Matrículas
+    <a (click)="toggleMatriculas()" class="menu-parent"> Matrículas
       <i class="icon-arrow" [class.rotated]="matriculasAbierto">▾</i>
     </a>
     <ul class="submenu" *ngIf="matriculasAbierto">
@@ -58,19 +56,19 @@
   </li>
 
   <li routerLinkActive="active" *ngIf="esDocente()">
-    <a routerLink="/registrar-notas"><i class="icon">✅</i> Registro de Notas</a>
+    <a routerLink="/registrar-notas"> Registro de Notas</a>
   </li>
 
   <li routerLinkActive="active" *ngIf="esSecretaria()">
-    <a routerLink="/corregir-notas"><i class="icon">✏️</i> Corregir Notas</a>
+    <a routerLink="/corregir-notas"> Corregir Notas</a>
   </li>
 
   <li routerLinkActive="active" *ngIf="esEstudiante()">
-    <a routerLink="/historial-academico"><i class="icon">🎓</i> Mi Historial</a>
+    <a routerLink="/historial-academico"> Mi Historial</a>
   </li>
 
   <li routerLinkActive="active" *ngIf="esEstudiante() || esAdmin() || esDocente || esSecretaria || esUsuario">
-    <a routerLink="/settings"><i class="icon"></i> Configuración</a>
+    <a routerLink="/settings"> Configuración</a>
   </li>
         </ul>
       </nav>

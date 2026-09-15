@@ -1,0 +1,188 @@
+.page-header {
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #F47B20;
+}
+
+.page-header h1 {
+  margin: 5px 0 6px;
+  color: #1B2A4A;
+  font-size: 30px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #5f6875;
+}
+
+.settings-card {
+  max-width: 720px;
+  background: #fff;
+  border: 1px solid #e4e7eb;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 8px 28px rgba(22, 34, 62, 0.06);
+}
+
+.card-title {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #eceff2;
+}
+
+.title-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: #fff3e9;
+  color: #F47B20;
+  border-radius: 10px;
+  flex: 0 0 44px;
+}
+
+.title-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.card-title h2 {
+  margin: 0;
+  color: #1B2A4A;
+  font-size: 21px;
+}
+
+.card-title p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form-field {
+  margin-bottom: 18px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 700;
+  color: #1B2A4A;
+  font-size: 14px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  width: 100%;
+  height: 46px;
+  padding: 0 46px 0 13px;
+  border: 1px solid #cfd5dc;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  outline: none;
+}
+
+.password-field input:focus {
+  border-color: #F47B20;
+  box-shadow: 0 0 0 3px rgba(244, 123, 32, 0.12);
+}
+
+.icon-button {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: #667085;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.icon-button:hover {
+  background: #f5f6f7;
+  color: #1B2A4A;
+}
+
+.icon-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+.form-field small {
+  display: block;
+  margin-top: 6px;
+  color: #c0392b;
+  font-size: 12px;
+}
+
+.alert {
+  padding: 11px 13px;
+  border-radius: 8px;
+  margin: 6px 0 16px;
+  font-size: 14px;
+}
+
+.alert.error {
+  background: #fff0ef;
+  color: #a93226;
+}
+
+.alert.success {
+  background: #edf8f1;
+  color: #24733e;
+}
+
+.save-button {
+  width: 100%;
+  height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: #F47B20;
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background: #e66e16;
+}
+
+.save-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.save-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 600px) {
+  .settings-card {
+    padding: 20px;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+  }
+}
