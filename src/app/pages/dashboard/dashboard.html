@@ -16,7 +16,7 @@
   >
     <header>
       <div>
-        <span>⚠️ Atención requerida</span>
+        <span>Atención requerida</span>
 
         <h2>
           Paralelos que no cumplen el cupo mínimo
@@ -99,7 +99,6 @@
         title="Ocultar este aviso"
         (click)="ocultarAlerta(paralelo.id)"
       >
-        ×
       </button>
     </article>
   </section>
@@ -129,7 +128,6 @@
       *ngFor="let acceso of accesos"
       [routerLink]="acceso.ruta"
     >
-      <i>{{ acceso.icono }}</i>
 
       <div>
         <h3>{{ acceso.titulo }}</h3>

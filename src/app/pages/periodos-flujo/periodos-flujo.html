@@ -1,7 +1,9 @@
 <div class="flujo-container">
   <div class="paso-configuracion">
     <span>Rama 1</span>
+
     <strong>Periodos académicos</strong>
+
     <small>
       Esta rama se crea independientemente de carreras y mallas.
     </small>
@@ -9,18 +11,25 @@
 
   <div class="panel-header">
     <h2>Periodos académicos</h2>
+
     <p class="descripcion">
-  Seleccione el periodo I o II y establezca libremente
-  sus fechas. La fecha de finalización debe ser posterior
-  a la fecha de inicio.
-</p>
+      Seleccione el periodo I o II y establezca libremente
+      sus fechas. La fecha de finalización debe ser posterior
+      a la fecha de inicio.
+    </p>
   </div>
 
-  <p *ngIf="error" class="mensaje-form error">
+  <p
+    *ngIf="error"
+    class="mensaje-form error"
+  >
     {{ error }}
   </p>
 
-  <p *ngIf="mensaje" class="mensaje-form exito">
+  <p
+    *ngIf="mensaje"
+    class="mensaje-form exito"
+  >
     {{ mensaje }}
   </p>
 
@@ -48,9 +57,17 @@
           [(ngModel)]="tipoNuevo"
           (ngModelChange)="actualizarNuevoPeriodo()"
         >
-          <option value="">Seleccione</option>
-          <option value="I">I</option>
-          <option value="II">II</option>
+          <option value="">
+            Seleccione
+          </option>
+
+          <option value="I">
+            I
+          </option>
+
+          <option value="II">
+            II
+          </option>
         </select>
       </div>
 
@@ -67,40 +84,50 @@
       </div>
 
       <div class="campo">
-  <label>Fecha de inicio *</label>
+        <label>Fecha de inicio *</label>
 
-  <input
-    type="date"
-    [(ngModel)]="nuevoPeriodo.fechaInicio"
-  />
-</div>
+        <input
+          type="date"
+          [(ngModel)]="nuevoPeriodo.fechaInicio"
+        />
+      </div>
 
-<div class="campo">
-  <label>Fecha de fin *</label>
+      <div class="campo">
+        <label>Fecha de fin *</label>
 
-  <input
-    type="date"
-    [(ngModel)]="nuevoPeriodo.fechaFin"
-    [min]="nuevoPeriodo.fechaInicio"
-  />
-</div>
+        <input
+          type="date"
+          [(ngModel)]="nuevoPeriodo.fechaFin"
+          [min]="nuevoPeriodo.fechaInicio"
+        />
+      </div>
 
       <button
+        type="button"
         class="btn btn-crear"
-        (click)="crearPeriodo()"
         [disabled]="guardando"
+        (click)="crearPeriodo()"
       >
         {{ guardando ? 'Guardando...' : 'Crear periodo' }}
       </button>
     </div>
   </div>
 
-  <div class="sin-datos" *ngIf="cargando">
+  <div
+    class="sin-datos"
+    *ngIf="cargando"
+  >
     Cargando periodos...
   </div>
 
-  <div class="lista-tarjetas" *ngIf="!cargando">
-    <div class="sin-datos" *ngIf="periodos.length === 0">
+  <div
+    class="lista-tarjetas"
+    *ngIf="!cargando"
+  >
+    <div
+      class="sin-datos"
+      *ngIf="periodos.length === 0"
+    >
       Aún no hay periodos creados.
     </div>
 
@@ -109,42 +136,71 @@
       *ngFor="let periodo of periodos"
     >
       <ng-container
-        *ngIf="editandoPeriodoId !== periodo.id; else editarPeriodo"
+        *ngIf="
+          editandoPeriodoId !== periodo.id;
+          else editarPeriodo
+        "
       >
         <div class="tarjeta-info">
-          <strong>{{ periodo.nombre }}</strong>
+          <strong>
+            {{ periodo.nombre }}
+          </strong>
 
           <span>
-            {{ periodo.fechaInicio }} → {{ periodo.fechaFin }}
+            {{ periodo.fechaInicio }}
+            →
+            {{ periodo.fechaFin }}
           </span>
         </div>
 
         <span
           class="badge-estado"
-          [ngClass]="periodo.estado?.toLowerCase()"
+          [ngClass]="periodo.estado.toLowerCase()"
         >
-          {{ periodo.estado === 'CERRADO' ? 'HISTÓRICO' : periodo.estado }}
+          {{
+            periodo.estado === 'CERRADO'
+              ? 'HISTÓRICO'
+              : periodo.estado
+          }}
         </span>
+
+        <button
+          *ngIf="periodo.estado === 'PLANIFICADO'"
+          type="button"
+          class="btn btn-guardar"
+          [disabled]="guardando"
+          (click)="activarPeriodo(periodo)"
+        >
+          {{
+            guardando
+              ? 'Activando...'
+              : 'Activar periodo'
+          }}
+        </button>
 
         <div class="tarjeta-acciones">
           <button
-            class="btn-icono"
             type="button"
-            title="Editar periodo"
-            [disabled]="periodo.estado === 'CERRADO'"
+            class="btn btn-editar"
+            [disabled]="
+              guardando ||
+              periodo.estado === 'CERRADO'
+            "
             (click)="activarEdicionPeriodo(periodo)"
           >
-            ✏️
+            Editar
           </button>
 
           <button
-            class="btn-icono btn-eliminar"
             type="button"
-            title="Eliminar periodo"
-            [disabled]="periodo.estado === 'CERRADO'"
+            class="btn btn-eliminar"
+            [disabled]="
+              guardando ||
+              periodo.estado === 'CERRADO'
+            "
             (click)="eliminarPeriodo(periodo)"
           >
-            🗑️
+            Eliminar
           </button>
         </div>
       </ng-container>
@@ -170,8 +226,13 @@
               [(ngModel)]="tipoEdicion"
               (ngModelChange)="actualizarPeriodoEditado()"
             >
-              <option value="I">I</option>
-              <option value="II">II</option>
+              <option value="I">
+                I
+              </option>
+
+              <option value="II">
+                II
+              </option>
             </select>
           </div>
 
@@ -180,52 +241,66 @@
 
             <input
               class="campo-calculado"
+              type="text"
               [value]="periodoEdit.nombre"
               readonly
             />
           </div>
 
           <div class="campo-edicion">
-  <label>Fecha de inicio *</label>
+            <label>Fecha de inicio *</label>
 
-  <input
-    type="date"
-    [(ngModel)]="periodoEdit.fechaInicio"
-  />
-</div>
+            <input
+              type="date"
+              [(ngModel)]="periodoEdit.fechaInicio"
+            />
+          </div>
 
-<div class="campo-edicion">
-  <label>Fecha de fin *</label>
+          <div class="campo-edicion">
+            <label>Fecha de fin *</label>
 
-  <input
-    type="date"
-    [(ngModel)]="periodoEdit.fechaFin"
-    [min]="periodoEdit.fechaInicio"
-  />
-</div>
+            <input
+              type="date"
+              [(ngModel)]="periodoEdit.fechaFin"
+              [min]="periodoEdit.fechaInicio"
+            />
+          </div>
+
           <div class="campo-edicion">
             <label>Estado *</label>
 
-            <select [(ngModel)]="periodoEdit.estado">
-              <option value="PLANIFICADO">PLANIFICADO</option>
-              <option value="ACTIVO">ACTIVO</option>
-              <option value="CERRADO">HISTÓRICO</option>
+            <select
+              [(ngModel)]="periodoEdit.estado"
+            >
+              <option value="PLANIFICADO">
+                PLANIFICADO
+              </option>
+
+              <option value="ACTIVO">
+                ACTIVO
+              </option>
             </select>
           </div>
 
           <div class="acciones-edicion">
             <button
+              type="button"
               class="btn btn-guardar"
-              (click)="guardarEdicionPeriodo(periodo.id)"
               [disabled]="guardando"
+              (click)="guardarEdicionPeriodo(periodo.id)"
             >
-              {{ guardando ? 'Guardando...' : 'Guardar' }}
+              {{
+                guardando
+                  ? 'Guardando...'
+                  : 'Guardar'
+              }}
             </button>
 
             <button
+              type="button"
               class="btn btn-cancelar"
-              (click)="cancelarEdicion()"
               [disabled]="guardando"
+              (click)="cancelarEdicion()"
             >
               Cancelar
             </button>
@@ -237,11 +312,14 @@
 
   <div class="navegacion-flujo">
     <span>
-      La rama de periodos ya puede quedar creada. Continúa con la malla
-      general.
+      La rama de periodos ya puede quedar creada.
+      Continúa con la malla general.
     </span>
 
-    <a class="btn-siguiente-flujo" routerLink="/mallas">
+    <a
+      class="btn-siguiente-flujo"
+      routerLink="/mallas"
+    >
       Ir a Mallas →
     </a>
   </div>

@@ -15,7 +15,6 @@ interface Acceso {
   titulo: string;
   descripcion: string;
   ruta: string;
-  icono: string;
 }
 
 @Component({
@@ -82,21 +81,18 @@ export class Dashboard implements OnInit {
           descripcion:
             'Administra docentes activos e inactivos para las asignaturas.',
           ruta: '/catalogos-base',
-          icono: '👨‍🏫',
         },
         {
           titulo: 'Mallas curriculares',
           descripcion:
             'Administra mallas, carreras, niveles, asignaturas y docentes.',
           ruta: '/mallas',
-          icono: '🧩',
         },
         {
           titulo: 'Usuarios',
           descripcion:
             'Autoriza cuentas y asigna roles.',
           ruta: '/users',
-          icono: '👥',
         },
         {
           titulo: 'Buscar estudiantes',
@@ -104,7 +100,6 @@ export class Dashboard implements OnInit {
             'Consulta expedientes y matrículas.',
           ruta:
             '/matriculas/buscar-estudiantes',
-          icono: '🔎',
         },
       ],
 
@@ -114,14 +109,12 @@ export class Dashboard implements OnInit {
           descripcion:
             'Registra estudiantes nuevos en ofertas con cupos.',
           ruta: '/matriculas/registrar',
-          icono: '📝',
         },
         {
           titulo: 'Solicitudes pendientes',
           descripcion:
             'Revisa documentos y aprueba matrículas.',
           ruta: '/matriculas/solicitudes',
-          icono: '📄',
         },
         {
           titulo: 'Redistribuir paralelos',
@@ -129,14 +122,12 @@ export class Dashboard implements OnInit {
             'Traslada estudiantes de paralelos que no cumplen el mínimo.',
           ruta:
             '/matriculas/redistribuir-paralelos',
-          icono: '🔄',
         },
         {
           titulo: 'Corregir calificaciones',
           descripcion:
             'Corrige errores con motivo y auditoría.',
           ruta: '/corregir-notas',
-          icono: '✏️',
         },
       ],
 
@@ -146,7 +137,6 @@ export class Dashboard implements OnInit {
           descripcion:
             'Ingresa NP1, NP2 y recuperación.',
           ruta: '/registrar-notas',
-          icono: '✅',
         },
       ],
 
@@ -156,14 +146,12 @@ export class Dashboard implements OnInit {
           descripcion:
             'Consulta tus opciones y presenta los documentos.',
           ruta: '/matriculas/solicitud',
-          icono: '📝',
         },
         {
           titulo: 'Historial académico',
           descripcion:
             'Consulta tus notas y matrículas.',
           ruta: '/historial-academico',
-          icono: '🎓',
         },
       ],
 

@@ -219,7 +219,43 @@ export class PeriodosFlujo implements OnInit {
       estado: periodo.estado,
     };
   }
+activarPeriodo(periodo: any): void {
+  this.error = '';
+  this.mensaje = '';
 
+  const confirmar = window.confirm(
+    `¿Está seguro de activar el periodo ${periodo.nombre}?`,
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  this.guardando = true;
+
+  this.service
+    .editarPeriodo(periodo.id, {
+      estado: 'ACTIVO',
+    })
+    .subscribe({
+      next: () => {
+        this.guardando = false;
+        this.mensaje =
+          `El periodo ${periodo.nombre} fue activado correctamente.`;
+
+        this.cargarPeriodos();
+      },
+
+      error: (error) => {
+        this.guardando = false;
+
+        this.error = this.mensajeError(
+          error,
+          'No se pudo activar el periodo académico.',
+        );
+      },
+    });
+}
   guardarEdicionPeriodo(
     id: string,
   ): void {

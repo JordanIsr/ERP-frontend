@@ -37,7 +37,7 @@
   </section>
 
   <div class="search-placeholder" *ngIf="!periodoVistaId">
-    <span>📅</span>
+    <span></span>
     <strong>Seleccione un periodo para continuar</strong>
     <p>La información de otros periodos permanecerá oculta y protegida.</p>
   </div>
@@ -73,7 +73,7 @@
     <p class="empty" *ngIf="cargando">Cargando mallas...</p>
     <p class="empty" *ngIf="!cargando && mallas.length === 0">Todavía no existen mallas. Cree la primera con el formulario superior.</p>
     <div class="search-placeholder" *ngIf="!cargando && mallas.length > 0 && !filtroEstadoMalla">
-      <span>🗂️</span><strong>Seleccione un estado</strong><p>Las mallas permanecerán ocultas hasta escoger Activas, Planificación o Históricas.</p>
+      <span></span><strong>Seleccione un estado</strong><p>Las mallas permanecerán ocultas hasta escoger Activas, Planificación o Históricas.</p>
     </div>
     <p class="empty" *ngIf="!cargando && filtroEstadoMalla && mallasFiltradas.length === 0">No existen mallas que coincidan con el estado y código seleccionados.</p>
     <div class="malla-cards" *ngIf="filtroEstadoMalla && mallasFiltradas.length > 0">
@@ -219,7 +219,7 @@
       <div class="levels-grid">
         <article class="level-card" *ngFor="let nivel of nivelesVisibles">
           <header><div><span>{{ nivel.numero }}</span><div><h3>{{ nivel.nombre }}</h3><small>{{ nivel.asignaturas.length }} de {{ nivel.cantidadAsignaturas }} asignaturas</small></div></div><b [class.complete]="nivel.asignaturas.length === nivel.cantidadAsignaturas">{{ nivel.asignaturas.length === nivel.cantidadAsignaturas ? 'Completo' : 'Pendiente' }}</b></header>
-          <p class="elemento-bloqueado" *ngIf="!nivel.editable">🔒 {{ nivel.motivoBloqueo || 'Este nivel contiene información académica y está protegido.' }}</p>
+          <p class="elemento-bloqueado" *ngIf="!nivel.editable"> {{ nivel.motivoBloqueo || 'Este nivel contiene información académica y está protegido.' }}</p>
           <div class="limit" *ngIf="nivel.editable"><label>Límite del nivel<input type="number" inputmode="numeric" min="1" max="50" step="1" (keydown)="bloquearNoEnteros($event)" [(ngModel)]="nivel.cantidadAsignaturas"></label><button (click)="guardarLimite(nivel)">Guardar límite</button></div>
           <div class="subjects">
             <div class="subject" *ngFor="let asignatura of asignaturasVisibles(nivel)">
