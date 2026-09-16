@@ -32,7 +32,15 @@ export class Matriculas implements OnInit {
   errorGeneral = '';
   mensajeExito = '';
   ofertas: OfertaInicialSecretaria[] = [];
-  paralelos: Array<ParaleloOfertaInicial & { periodoCarreraId: string }> = [];
+  paralelos: Array<
+    ParaleloOfertaInicial & {
+      periodoCarreraId: string;
+      centroEstudio: {
+        id: string;
+        nombre: string;
+      };
+    }
+  > = [];
   carreraId = '';
   periodoId = '';
   mallaId = '';
@@ -251,16 +259,33 @@ private cargarOfertaInicial(): void {
   cambiarJornada(): void {
     this.periodoCarreraId = '';
     this.paraleloId = '';
+
     this.paralelos = this.ofertas
-      .filter((oferta) =>
-        oferta.carrera.id === this.carreraId
-        && oferta.periodo.id === this.periodoId
-        && (oferta.mallaGeneral?.id ?? oferta.versionMalla.id) === this.mallaId
-        && oferta.jornada === this.jornada,
+      .filter(
+        (oferta) =>
+          oferta.carrera.id === this.carreraId &&
+          oferta.periodo.id === this.periodoId &&
+          (
+            oferta.mallaGeneral?.id ??
+            oferta.versionMalla.id
+          ) === this.mallaId &&
+          oferta.jornada === this.jornada,
       )
-      .flatMap((oferta) => oferta.paralelos
-        .filter((paralelo) => paralelo.nivel.id === this.nivelId)
-        .map((paralelo) => ({ ...paralelo, periodoCarreraId: oferta.periodoCarreraId })));
+      .flatMap((oferta) =>
+        oferta.paralelos
+          .filter(
+            (paralelo) =>
+              paralelo.nivel.id ===
+              this.nivelId,
+          )
+          .map((paralelo) => ({
+            ...paralelo,
+            periodoCarreraId:
+              oferta.periodoCarreraId,
+            centroEstudio:
+              oferta.centroEstudio,
+          })),
+      );
   }
 
   cambiarParalelo(): void {
@@ -271,7 +296,17 @@ private cargarOfertaInicial(): void {
     return this.ofertas.find((oferta) => oferta.periodoCarreraId === this.periodoCarreraId);
   }
 
-  get paraleloSeleccionado(): (ParaleloOfertaInicial & { periodoCarreraId: string }) | undefined {
+  get paraleloSeleccionado():
+    | (
+        ParaleloOfertaInicial & {
+          periodoCarreraId: string;
+          centroEstudio: {
+            id: string;
+            nombre: string;
+          };
+        }
+      )
+    | undefined {
     return this.paralelos.find((paralelo) => paralelo.id === this.paraleloId);
   }
 

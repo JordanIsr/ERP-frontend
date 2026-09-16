@@ -126,60 +126,101 @@ export class SolicitudesMatriculas implements OnInit {
     this.errorGeneral = '';
   }
 
-  seleccionarCedula(event: Event): void {
-    const archivo =
-      this.obtenerArchivoDesdeEvento(event);
+  seleccionarCedula(
+  event: Event,
+): void {
+  const input =
+    event.target as HTMLInputElement;
+
+  const archivo =
+    input.files?.[0] ?? null;
+
+  this.erroresArchivo[
+    TIPOS_DOCUMENTO.CEDULA
+  ] = '';
+
+  if (!archivo) {
+    this.archivoCedula = null;
 
     this.erroresArchivo[
       TIPOS_DOCUMENTO.CEDULA
-    ] = '';
+    ] = 'Debes seleccionar la copia de cédula.';
 
-    if (
-      archivo &&
-      !this.validarArchivo(
-        archivo,
-        TIPOS_DOCUMENTO.CEDULA,
-      )
-    ) {
-      this.archivoCedula = null;
-      return;
-    }
-
-    this.archivoCedula = archivo;
+    return;
   }
 
-  seleccionarRespaldo(event: Event): void {
-    const archivo =
-      this.obtenerArchivoDesdeEvento(event);
+  if (
+    !this.validarArchivo(
+      archivo,
+      TIPOS_DOCUMENTO.CEDULA,
+    )
+  ) {
+    this.archivoCedula = null;
 
-    const tipo:
-      | TipoDocumentoMatricula
-      | null
-      | undefined =
-      this.informacionOpciones
-        ?.documentoRequerido;
+    /*
+     * Limpia también el nombre mostrado
+     * por el input cuando el archivo no es válido.
+     */
+    input.value = '';
 
-    if (
-      !tipo ||
-      tipo === TIPOS_DOCUMENTO.CEDULA
-    ) {
-      this.errorGeneral =
-        'No se pudo determinar el documento de respaldo requerido.';
-      return;
-    }
-
-    this.erroresArchivo[tipo] = '';
-
-    if (
-      archivo &&
-      !this.validarArchivo(archivo, tipo)
-    ) {
-      this.archivoRespaldo = null;
-      return;
-    }
-
-    this.archivoRespaldo = archivo;
+    return;
   }
+
+  this.archivoCedula = archivo;
+
+  this.erroresArchivo[
+    TIPOS_DOCUMENTO.CEDULA
+  ] = '';
+}
+
+  seleccionarRespaldo(
+  event: Event,
+): void {
+  const input =
+    event.target as HTMLInputElement;
+
+  const archivo =
+    input.files?.[0] ?? null;
+
+  const tipo =
+    this.informacionOpciones
+      ?.documentoRequerido;
+
+  if (
+    !tipo ||
+    tipo === TIPOS_DOCUMENTO.CEDULA
+  ) {
+    this.errorGeneral =
+      'No se pudo determinar el documento de respaldo requerido.';
+
+    input.value = '';
+    this.archivoRespaldo = null;
+
+    return;
+  }
+
+  this.erroresArchivo[tipo] = '';
+
+  if (!archivo) {
+    this.archivoRespaldo = null;
+
+    this.erroresArchivo[tipo] =
+      `Debes seleccionar ${this.nombreDocumento(
+        tipo,
+      ).toLowerCase()}.`;
+
+    return;
+  }
+
+  if (!this.validarArchivo(archivo, tipo)) {
+    this.archivoRespaldo = null;
+    input.value = '';
+    return;
+  }
+
+  this.archivoRespaldo = archivo;
+  this.erroresArchivo[tipo] = '';
+}
 
   seleccionarArchivoReenvio(
     event: Event,
@@ -215,30 +256,52 @@ export class SolicitudesMatriculas implements OnInit {
   }
 
   private validarArchivo(
-    archivo: File,
-    tipo: TipoDocumentoMatricula,
-  ): boolean {
-    const nombre =
-      archivo.name.toLowerCase();
+  archivo: File,
+  tipo: TipoDocumentoMatricula,
+): boolean {
+  const nombre =
+    archivo.name.trim().toLowerCase();
 
-    const esPdf =
-      archivo.type === 'application/pdf' &&
-      nombre.endsWith('.pdf');
+  const tieneExtensionPdf =
+    nombre.endsWith('.pdf');
 
-    if (!esPdf) {
-      this.erroresArchivo[tipo] =
-        'El documento debe ser un archivo PDF.';
-      return false;
-    }
+  /*
+   * Algunos navegadores pueden devolver
+   * el tipo MIME vacío.
+   */
+  const tieneMimePermitido =
+    !archivo.type ||
+    archivo.type === 'application/pdf' ||
+    archivo.type === 'application/x-pdf';
 
-    if (archivo.size > this.maximoArchivo) {
-      this.erroresArchivo[tipo] =
-        'El documento no puede superar los 5 MB.';
-      return false;
-    }
+  if (
+    !tieneExtensionPdf ||
+    !tieneMimePermitido
+  ) {
+    this.erroresArchivo[tipo] =
+      'El documento debe ser un archivo PDF válido.';
 
-    return true;
+    return false;
   }
+
+  if (archivo.size <= 0) {
+    this.erroresArchivo[tipo] =
+      'El documento seleccionado está vacío.';
+
+    return false;
+  }
+
+  if (archivo.size > this.maximoArchivo) {
+    this.erroresArchivo[tipo] =
+      'El documento no puede superar los 5 MB.';
+
+    return false;
+  }
+
+  this.erroresArchivo[tipo] = '';
+
+  return true;
+}
 
   enviarSolicitud(): void {
     this.errorGeneral = '';
@@ -258,11 +321,16 @@ export class SolicitudesMatriculas implements OnInit {
     }
 
     if (!this.archivoCedula) {
-      this.erroresArchivo[
-        TIPOS_DOCUMENTO.CEDULA
-      ] = 'Debes subir la copia de cédula.';
-      return;
-    }
+  this.erroresArchivo[
+    TIPOS_DOCUMENTO.CEDULA
+  ] =
+    this.erroresArchivo[
+      TIPOS_DOCUMENTO.CEDULA
+    ] ||
+    'Debes subir la copia de cédula.';
+
+  return;
+}
 
     if (
       !tipoRespaldo ||
@@ -274,13 +342,14 @@ export class SolicitudesMatriculas implements OnInit {
     }
 
     if (!this.archivoRespaldo) {
-      this.erroresArchivo[tipoRespaldo] =
-        `Debes subir ${this.nombreDocumento(
-          tipoRespaldo,
-        ).toLowerCase()}.`;
+  this.erroresArchivo[tipoRespaldo] =
+    this.erroresArchivo[tipoRespaldo] ||
+    `Debes subir ${this.nombreDocumento(
+      tipoRespaldo,
+    ).toLowerCase()}.`;
 
-      return;
-    }
+  return;
+}
 
     this.enviando = true;
 

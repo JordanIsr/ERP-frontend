@@ -128,7 +128,29 @@
           <div class="portfolio-title-row"><h2>{{ malla.codigo }}</h2><span class="portfolio-state" [attr.data-state]="malla.estado">{{ malla.estado }}</span></div>
           <p>Vigencia del {{ malla.fechaInicio | date: 'dd/MM/yyyy' }} al {{ malla.fechaFin | date: 'dd/MM/yyyy' }} · {{ malla.duracionAnios }} año(s)</p>
         </div>
-        <button class="portfolio-manage" *ngIf="!periodoVistaEsHistorico && malla.estado === 'ACTIVA' && malla.permiteAgregarEstructura" (click)="alternarGestionActiva()">{{ modoGestionActiva ? 'Cerrar administración' : 'Administrar estructura' }}</button>
+
+        <div class="portfolio-actions">
+          <label class="portfolio-center-filter">
+            <span>Centro de estudio</span>
+            <select
+              [(ngModel)]="centroVistaId"
+              (ngModelChange)="cambiarCentroVista()"
+            >
+              <option value="">Seleccione un centro</option>
+              <option *ngFor="let centro of centros" [value]="centro.id">
+                {{ centro.nombre }}
+              </option>
+            </select>
+          </label>
+
+          <button
+            class="portfolio-manage"
+            *ngIf="!periodoVistaEsHistorico && malla.estado === 'ACTIVA' && malla.permiteAgregarEstructura"
+            (click)="alternarGestionActiva()"
+          >
+            {{ modoGestionActiva ? 'Cerrar administración' : 'Administrar estructura' }}
+          </button>
+        </div>
       </header>
 
       <div class="portfolio-stats">
@@ -141,7 +163,26 @@
       <p class="empty portfolio-loading" *ngIf="cargandoResumenMalla">Cargando períodos, paralelos y cupos de la malla...</p>
       <p class="empty" *ngIf="!cargandoResumenMalla && malla.carreras.length === 0">Esta malla no contiene carreras.</p>
 
-      <div class="portfolio-careers" *ngIf="!cargandoResumenMalla">
+      <p
+        class="empty center-message"
+        *ngIf="!cargandoResumenMalla && malla.carreras.length > 0 && !centroVistaId"
+      >
+        Seleccione un centro de estudio para consultar sus ofertas académicas.
+      </p>
+
+      <p
+        class="empty center-message"
+        *ngIf="!cargandoResumenMalla && centroVistaId && !existenAperturasCentroSeleccionado"
+      >
+        No existen ofertas académicas para
+        {{ centroVistaSeleccionado?.nombre }}
+        en el periodo {{ periodoVistaSeleccionado?.nombre }}.
+      </p>
+
+      <div
+        class="portfolio-careers"
+        *ngIf="!cargandoResumenMalla && centroVistaId && existenAperturasCentroSeleccionado"
+      >
         <article class="portfolio-career" *ngFor="let carrera of malla.carreras">
           <header class="career-banner">
             <div><span>{{ carrera.codigo }}</span><h3>{{ carrera.nombre }}</h3></div>
@@ -160,7 +201,7 @@
                   <p class="no-opening" *ngIf="aperturas.length === 0">Sin oferta ni paralelo registrado en {{ periodoVistaSeleccionado?.nombre }}</p>
                   <div class="opening-card" *ngFor="let apertura of aperturas">
                     <div class="opening-period"><strong>{{ apertura.periodoNombre }}</strong><span>{{ apertura.periodoFechaInicio | date: 'dd/MM/yyyy' }} — {{ apertura.periodoFechaFin | date: 'dd/MM/yyyy' }}</span></div>
-                    <div class="opening-tags"><span>{{ apertura.jornada }}</span><span>{{ apertura.centroNombre }}</span><span>Paralelo {{ apertura.paraleloNombre }}</span></div>
+                    <div class="opening-tags"><span>{{ apertura.jornada }}</span><span>Paralelo {{ apertura.paraleloNombre }}</span></div>
                     <small>{{ apertura.cuposOcupados }}/{{ apertura.cupoMaximo }} cupos ocupados · mínimo {{ apertura.cupoMinimo }}</small>
 
                     <div class="portfolio-subjects">

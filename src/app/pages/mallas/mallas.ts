@@ -69,6 +69,7 @@ interface AperturaNivelResumen {
   periodoFechaInicio: string;
   periodoFechaFin: string;
   jornada: string;
+  centroId: string;
   centroNombre: string;
   paraleloNombre: string;
   cupoMinimo: number;
@@ -142,6 +143,7 @@ private formularioMallaSection?: ElementRef<HTMLElement>;
   periodos: PeriodoConfig[] = [];
   periodoVistaId = '';
   centros: CentroConfig[] = [];
+  centroVistaId = '';
   ofertas: OfertaConfig[] = [];
   ofertaSeleccionadaId = '';
   paralelosConfigurados: ParaleloConfig[] = [];
@@ -282,12 +284,39 @@ guardandoCambioDocente = false;
 }
 
   get ofertasDeCarrera(): OfertaConfig[] {
-    if (!this.carreraSeleccionada || !this.periodoVistaId) return [];
+    if (
+      !this.carreraSeleccionada ||
+      !this.periodoVistaId ||
+      !this.centroVistaId
+    ) {
+      return [];
+    }
 
     return this.ofertas.filter(
       (oferta) =>
         oferta.carrera.id === this.carreraSeleccionada?.id
-        && oferta.periodo.id === this.periodoVistaId,
+        && oferta.periodo.id === this.periodoVistaId
+        && oferta.centroEstudio.id === this.centroVistaId,
+    );
+  }
+
+  get centroVistaSeleccionado(): CentroConfig | undefined {
+    return this.centros.find(
+      (centro) => centro.id === this.centroVistaId,
+    );
+  }
+
+  get existenAperturasCentroSeleccionado(): boolean {
+    if (!this.centroVistaId) {
+      return false;
+    }
+
+    return Object.values(this.aperturasPorNivel).some(
+      (aperturas) =>
+        aperturas.some(
+          (apertura) =>
+            apertura.centroId === this.centroVistaId,
+        ),
     );
   }
 
@@ -390,6 +419,7 @@ guardandoCambioDocente = false;
     this.mallaSeleccionada = null;
     this.carreraSeleccionada = null;
     this.modoGestionActiva = false;
+    this.centroVistaId = '';
     this.aperturasPorNivel = {};
     this.ofertaSeleccionadaId = '';
     this.paralelosConfigurados = [];
@@ -411,6 +441,7 @@ guardandoCambioDocente = false;
     this.mallaSeleccionada = null;
     this.carreraSeleccionada = null;
     this.modoGestionActiva = false;
+    this.centroVistaId = '';
     this.aperturasPorNivel = {};
     this.cancelarMalla();
     this.cancelarCarrera();
@@ -431,8 +462,28 @@ guardandoCambioDocente = false;
     }
   }
 
-  aperturasDeNivel(nivelId: string): AperturaNivelResumen[] {
-    return this.aperturasPorNivel[nivelId] ?? [];
+  cambiarCentroVista(): void {
+    this.formularioOferta.centroEstudioId =
+      this.centroVistaId;
+
+    this.ofertaSeleccionadaId = '';
+    this.paralelosConfigurados = [];
+    this.cerrarAsignaturasParalelo();
+  }
+
+  aperturasDeNivel(
+    nivelId: string,
+  ): AperturaNivelResumen[] {
+    if (!this.centroVistaId) {
+      return [];
+    }
+
+    return (
+      this.aperturasPorNivel[nivelId] ?? []
+    ).filter(
+      (apertura) =>
+        apertura.centroId === this.centroVistaId,
+    );
   }
 
   private cargarResumenMalla(malla: MallaGeneral): void {
@@ -526,6 +577,7 @@ guardandoCambioDocente = false;
                   periodoFechaInicio: oferta.periodo.fechaInicio,
                   periodoFechaFin: oferta.periodo.fechaFin,
                   jornada: oferta.jornada,
+                  centroId: oferta.centroEstudio.id,
                   centroNombre: oferta.centroEstudio.nombre,
                   paraleloNombre: paralelo.nombre,
                   cupoMinimo: paralelo.cupoMinimo,
